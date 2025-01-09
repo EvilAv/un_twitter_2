@@ -1,27 +1,35 @@
-import React, { useCallback, useState } from "react";
-import { getDataFromApi } from "../features/request";
+import React, { useCallback, useEffect, useState } from "react";
 import { Header } from "../components/header";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { Home } from "../pages/home";
 import { Login } from "../pages/login";
 
 export const App = () => {
-    const [message, setMessage] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    const onClick = useCallback(async () => {
-        const data = await getDataFromApi();
-        if (data) {
-            setMessage(data.msg);
+    useEffect(() => {
+        const token = localStorage.getItem("auth_token");
+        if (token) {
+            setIsAuthenticated(true);
         }
-    }, []);
+    }, [setIsAuthenticated]);
 
     return (
         <>
             <BrowserRouter>
-                <Header isAuthenticated={false} />
+                <Header
+                    isAuthenticated={isAuthenticated}
+                    onLogout={() => setIsAuthenticated(false)}
+                />
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
+                    <Route
+                        path="/login"
+                        element={
+                            // maybe should refactor
+                            <Login onLogin={() => setIsAuthenticated(true)} />
+                        }
+                    />
                 </Routes>
             </BrowserRouter>
         </>

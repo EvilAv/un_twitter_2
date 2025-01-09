@@ -1,14 +1,17 @@
 import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router";
 import { loginToApi } from "../../features/login";
-import { getDataFromApiWithJWT } from "../../features/request";
 
 type LoginData = {
     login: string | null;
     password: string | null;
 };
 
-export const Login = () => {
+type Props = {
+    onLogin: () => void;
+}
+
+export const Login = ({onLogin}: Props) => {
     const [loginData, setLoginData] = useState<LoginData>({ login: null, password: null });
     const navigate = useNavigate();
 
@@ -22,10 +25,8 @@ export const Login = () => {
             });
 
             if (token){
-                console.log('message')
+                onLogin();
                 navigate('/');
-                const a = await getDataFromApiWithJWT<any>('/profile')
-                console.log(a);
             }
         }
     }, [loginData]);
