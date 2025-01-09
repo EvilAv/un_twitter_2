@@ -1,4 +1,5 @@
 import { API_PATH } from "./const";
+import { ResponseBody } from "./types";
 
 // TODO: add types
 export async function getDataFromApi(path?: string) {
@@ -14,21 +15,46 @@ export async function getDataFromApi(path?: string) {
     return null;
 }
 
-export async function loginToApi(login: string, password: string) {
-    const response = await fetch(API_PATH + "/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json;charset=utf-8",
-        },
-        body: JSON.stringify({
-            login,
-            password,
-        }),
-    });
+export const postRequestToApi = async <Params, Response>(
+    path: string,
+    params: Params
+) => {
+    try {
+        const response = await fetch(API_PATH + path, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify(params),
+        });
 
-    const result = await response.json();
-    if (result.message === 'ok' && result.token){
-        return true;
+        const result = (await response.json()) as ResponseBody<Response>;
+        if (!result.msg) {
+            return result as Omit<Response, "msg">;
+        }
+    } catch (error) {
+        console.log(error);
     }
-    return false;
-}
+    return null;
+};
+
+export const getDataFromApiWithJWT = async <T>(path?: string) => {
+    try {
+        const token = localStorage.getItem("auth_token");
+        if (!token){
+            return null;
+        }
+
+        const response = await fetch(API_PATH + (path ?? ""), {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const json = (await response.json()) as T;
+        return json;
+    } catch (error) {
+        console.log(error);
+    }
+    return null;
+};

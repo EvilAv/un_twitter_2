@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
-import { loginToApi } from "../../features/request";
 import { useNavigate } from "react-router";
+import { loginToApi } from "../../features/login";
+import { getDataFromApiWithJWT } from "../../features/request";
 
 type LoginData = {
     login: string | null;
@@ -15,11 +16,16 @@ export const Login = () => {
     const onSubmit = useCallback(async() => {
         if (loginData.login && loginData.password){
 
-            const isAuthenticated = await loginToApi(loginData.login, loginData.password);
+            const token = await loginToApi({
+                login: loginData.login,
+                password: loginData.password
+            });
 
-            if (isAuthenticated){
+            if (token){
                 console.log('message')
                 navigate('/');
+                const a = await getDataFromApiWithJWT<any>('/profile')
+                console.log(a);
             }
         }
     }, [loginData]);
