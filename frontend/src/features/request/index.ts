@@ -51,8 +51,14 @@ export const getDataFromApiWithJWT = async <T>(path?: string) => {
             },
         });
 
-        const json = (await response.json()) as T;
-        return json;
+        const result = (await response.json()) as ResponseBody<T>;
+        if (result.msg){
+            return null;
+        }
+        if (result.token){
+            localStorage.setItem('auth_token', result.token);
+        }
+        return result as Omit<T, 'msg' | 'token'>;
     } catch (error) {
         console.log(error);
     }

@@ -6,7 +6,7 @@ type Props = {
 };
 
 type Data = {
-    login: string;
+    nickname: string;
 }
 
 import styles from "./styles.module.css";
@@ -15,13 +15,13 @@ import { getDataFromApiWithJWT } from "../../features/request";
 
 export const Header = ({ isAuthenticated, onLogout}: Props) => {
     const navigate = useNavigate();
-    const [login, setLogin] = useState<string | null>(null);
+    const [nickname, setNickname] = useState<string | null>(null);
 
     useEffect(() => {
         async function getData() {
             const data = await getDataFromApiWithJWT<Data>('/profile');
             if (data){
-                setLogin(data.login);
+                setNickname(data.nickname);
             }
         }
         if (isAuthenticated){
@@ -40,7 +40,7 @@ export const Header = ({ isAuthenticated, onLogout}: Props) => {
 
     return (
         <header className={styles.root}>
-            {isAuthenticated && <div>{login}</div>}
+            {isAuthenticated && <div>{nickname}</div>}
             {isAuthenticated ? (
                 <button onClick={onLogoutClick}>logout</button>
             ) : (

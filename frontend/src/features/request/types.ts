@@ -1,5 +1,9 @@
-export type ErrorResponseBody = {
+type ErrorResponseBody = {
     msg: string;
 }
 
-export type ResponseBody<T> = T & Partial<ErrorResponseBody>
+type TokenBody = {
+    token?: string;
+}
+
+export type ResponseBody<T> = T & Partial<ErrorResponseBody> & TokenBody;

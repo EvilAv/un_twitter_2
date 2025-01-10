@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, jwt_required
-from core import app
+from core import app, db, bcrypt
 from flask import json, request
+
+from core.models import User
 
 @app.after_request
 def refresh_expiring_jwts(response):
@@ -30,19 +32,25 @@ def index():
 def create_token():
     login = request.json.get('login', None)
     password = request.json.get('password', None)
-    if login != 'kenny' and password != 'kenny':
-        return {
-            'message': 'wrong!'
-        }, 401
-    token = create_access_token(identity=login)
+    if login and password:
+        # legacy
+        # user = User.query.filter_by(login=login).first()
+        user = db.session.execute(db.select(User).filter_by(login=login)).scalar_one()
+        if bcrypt.check_password_hash(user.password_hash, password):
+            print('ok')
+            token = create_access_token(identity=login)
+            return {
+                'token': token,
+            }
     return {
-        'token': token,
-        'message': 'ok',
-    }
+        'message': 'wrong!'
+    }, 401
 
 @app.route('/profile')
 @jwt_required()
 def get_profile():
+    login = get_jwt_identity()
+    user = db.session.execute(db.select(User).filter_by(login=login)).scalar_one()
     return {
-        'login': get_jwt_identity()
+        'nickname': user.nickname
     }

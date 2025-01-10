@@ -1,5 +1,6 @@
 .venv
 .flaskenv
 __pycache__
+backend/migrations
 
 node_modules
