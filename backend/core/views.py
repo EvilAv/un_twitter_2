@@ -35,8 +35,8 @@ def create_token():
     if login and password:
         # legacy
         # user = User.query.filter_by(login=login).first()
-        user = db.session.execute(db.select(User).filter_by(login=login)).scalar_one()
-        if bcrypt.check_password_hash(user.password_hash, password):
+        user = db.session.execute(db.select(User).filter_by(login=login)).scalar_one_or_none()
+        if user and bcrypt.check_password_hash(user.password_hash, password):
             print('ok')
             token = create_access_token(identity=login)
             return {

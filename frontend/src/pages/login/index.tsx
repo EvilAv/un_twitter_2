@@ -2,59 +2,82 @@ import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router";
 import { loginToApi } from "../../features/login";
 
-type LoginData = {
+type LoginFormData = {
     login: string | null;
     password: string | null;
 };
 
 type Props = {
     onLogin: () => void;
-}
+};
 
-export const Login = ({onLogin}: Props) => {
-    const [loginData, setLoginData] = useState<LoginData>({ login: null, password: null });
+export const Login = ({ onLogin }: Props) => {
+    const [loginFormData, setLoginFormData] = useState<LoginFormData>({
+        login: null,
+        password: null,
+    });
     const navigate = useNavigate();
 
     // TODO: refactor that shit
-    const onSubmit = useCallback(async() => {
-        if (loginData.login && loginData.password){
-
+    const onSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (loginFormData.login && loginFormData.password) {
             const token = await loginToApi({
-                login: loginData.login,
-                password: loginData.password
+                login: loginFormData.login,
+                password: loginFormData.password,
             });
 
-            if (token){
+            if (token) {
                 onLogin();
-                navigate('/');
+                navigate("/");
             }
         }
-    }, [loginData]);
+    }, [loginFormData]);
 
-    const onLoginChanged = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = event.target;
-        const login = value.trim();
+    const onLoginChanged = useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>) => {
+            const { value } = event.target;
+            const login = value.trim();
 
-        if (login || login.length > 0){
-            setLoginData({...loginData, login})
-        }
-    }, [setLoginData, loginData])
+            if (login || login.length > 0) {
+                setLoginFormData({ ...loginFormData, login });
+            }
+        },
+        [setLoginFormData, loginFormData]
+    );
 
-    const onPasswordChanged = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = event.target;
-        const password = value.trim();
+    const onPasswordChanged = useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>) => {
+            const { value } = event.target;
+            const password = value.trim();
 
-        if (password || password.length > 0){
-            setLoginData({...loginData, password})
-        }
-    }, [setLoginData, loginData])
+            if (password || password.length > 0) {
+                setLoginFormData({ ...loginFormData, password });
+            }
+        },
+        [setLoginFormData, loginFormData]
+    );
 
     return (
         <>
             <div>Login</div>
-            <input onChange={onLoginChanged} type="text" placeholder="Login" />
-            <input onChange={onPasswordChanged} type="text" placeholder="Password" />
-            <button onClick={onSubmit}>submit</button>
+            <form onSubmit={onSubmit}>
+                <input
+                    type="text"
+                    placeholder="Login"
+                    name="login"
+                    value={loginFormData.login || ""}
+                    onChange={onLoginChanged}
+                />
+                <input
+                    type="password"
+                    placeholder="Password"
+                    name="password"
+                    value={loginFormData.password || ""}
+                    onChange={onPasswordChanged}
+                />
+                <input type="submit" value="Log in"/>
+            </form>
         </>
     );
 };

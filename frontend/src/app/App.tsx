@@ -7,21 +7,13 @@ import { Login } from "../pages/login";
 export const App = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    useEffect(() => {
-        // kind of bad practice, cause we think we are logged in even token has expired
-        // need to refactor then
-        const token = localStorage.getItem("auth_token");
-        if (token) {
-            setIsAuthenticated(true);
-        }
-    }, [setIsAuthenticated]);
-
     return (
         <>
             <BrowserRouter>
                 <Header
                     isAuthenticated={isAuthenticated}
                     onLogout={() => setIsAuthenticated(false)}
+                    onLogin={() => setIsAuthenticated(true)}
                 />
                 <Routes>
                     <Route path="/" element={<Home />} />

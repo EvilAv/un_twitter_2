@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 type Props = {
     isAuthenticated: boolean;
     onLogout: () => void;
+    onLogin: () => void;
 };
 
 type Data = {
@@ -13,7 +14,7 @@ import styles from "./styles.module.css";
 import { useNavigate } from "react-router";
 import { getDataFromApiWithJWT } from "../../features/request";
 
-export const Header = ({ isAuthenticated, onLogout}: Props) => {
+export const Header = ({ isAuthenticated, onLogout, onLogin}: Props) => {
     const navigate = useNavigate();
     const [nickname, setNickname] = useState<string | null>(null);
 
@@ -22,12 +23,11 @@ export const Header = ({ isAuthenticated, onLogout}: Props) => {
             const data = await getDataFromApiWithJWT<Data>('/profile');
             if (data){
                 setNickname(data.nickname);
+                onLogin();
             }
         }
-        if (isAuthenticated){
-            getData()
-        }
-    }, [isAuthenticated])
+        getData();
+    }, [isAuthenticated, onLogin])
 
     const onLoginClick = useCallback(() => {
         navigate("/login");
