@@ -32,6 +32,7 @@ export const postRequestToApi = async <Params, Response>(
         if (!result.msg) {
             return result as Omit<Response, "msg">;
         }
+        console.log('backend error', result.msg);
     } catch (error) {
         console.log(error);
     }

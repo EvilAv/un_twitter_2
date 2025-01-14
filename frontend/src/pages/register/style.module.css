@@ -1,0 +1,12 @@
+.root {
+    display: flex;
+    flex-direction: column;
+    width: 150px;
+    padding-left: 50px;
+    gap: 10px;
+}
+
+.field {
+    display: block;
+    width: 150px;
+}

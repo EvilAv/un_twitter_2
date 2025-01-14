@@ -2,6 +2,8 @@ import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router";
 import { loginToApi } from "../../features/login";
 
+import style from './style.module.css'
+
 type LoginFormData = {
     login: string | null;
     password: string | null;
@@ -42,6 +44,9 @@ export const Login = ({ onLogin }: Props) => {
             if (login || login.length > 0) {
                 setLoginFormData({ ...loginFormData, login });
             }
+            if (login.length === 0){
+                setLoginFormData({ ...loginFormData, login: null });
+            }
         },
         [setLoginFormData, loginFormData]
     );
@@ -54,14 +59,22 @@ export const Login = ({ onLogin }: Props) => {
             if (password || password.length > 0) {
                 setLoginFormData({ ...loginFormData, password });
             }
+            if (password.length === 0){
+                setLoginFormData({ ...loginFormData, password: null });
+            }
         },
         [setLoginFormData, loginFormData]
     );
 
+    const navigateToRegisterPage = useCallback((event: React.MouseEvent) => {
+        event.preventDefault();
+        navigate('/register');
+    }, []);
+
     return (
         <>
-            <div>Login</div>
-            <form onSubmit={onSubmit}>
+            <h1>Login</h1>
+            <form onSubmit={onSubmit} className={style.root}>
                 <input
                     type="text"
                     placeholder="Login"
@@ -78,6 +91,7 @@ export const Login = ({ onLogin }: Props) => {
                 />
                 <input type="submit" value="Log in"/>
             </form>
+            <a href='' onClick={navigateToRegisterPage} className={style.link}>make an account</a>
         </>
     );
 };

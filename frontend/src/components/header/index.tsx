@@ -13,6 +13,7 @@ type Data = {
 import styles from "./styles.module.css";
 import { useNavigate } from "react-router";
 import { getDataFromApiWithJWT } from "../../features/request";
+import { Logo } from "../logo";
 
 export const Header = ({ isAuthenticated, onLogout, onLogin}: Props) => {
     const navigate = useNavigate();
@@ -40,6 +41,7 @@ export const Header = ({ isAuthenticated, onLogout, onLogin}: Props) => {
 
     return (
         <header className={styles.root}>
+            <Logo />
             {isAuthenticated && <div>{nickname}</div>}
             {isAuthenticated ? (
                 <button onClick={onLogoutClick}>logout</button>

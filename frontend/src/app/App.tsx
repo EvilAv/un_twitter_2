@@ -3,6 +3,7 @@ import { Header } from "../components/header";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { Home } from "../pages/home";
 import { Login } from "../pages/login";
+import { Register } from "../pages/register";
 
 export const App = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -24,6 +25,7 @@ export const App = () => {
                             <Login onLogin={() => setIsAuthenticated(true)} />
                         }
                     />
+                    <Route path="/register" element={<Register />} />
                 </Routes>
             </BrowserRouter>
         </>
