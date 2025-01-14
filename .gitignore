@@ -2,5 +2,6 @@
 .flaskenv
 __pycache__
 backend/migrations
+backend/base.db
 
 node_modules

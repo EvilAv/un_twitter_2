@@ -25,7 +25,14 @@ export const App = () => {
                             <Login onLogin={() => setIsAuthenticated(true)} />
                         }
                     />
-                    <Route path="/register" element={<Register />} />
+                    <Route
+                        path="/register"
+                        element={
+                            <Register
+                                onLogin={() => setIsAuthenticated(true)}
+                            />
+                        }
+                    />
                 </Routes>
             </BrowserRouter>
         </>

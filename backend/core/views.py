@@ -46,6 +46,28 @@ def create_token():
         'message': 'wrong!'
     }, 401
 
+@app.route('/register', methods=['POST'])
+def register_new_user():
+    login = request.json.get('login', None)
+    nickname = request.json.get('nickname', None)
+    password1 = request.json.get('password1', None)
+    password2 = request.json.get('password2', None)
+    if login and password1 and password2 and nickname and password1 == password2:
+        password_hash = bcrypt.generate_password_hash(password1).decode('utf8')
+        new_user = User(login=login, nickname=nickname, password_hash=password_hash)
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        token = create_access_token(identity=login)
+        return {
+            'status': 'ok',
+            'token': token,
+        }
+    return {
+        'status': 'wrong!'
+    }
+
 @app.route('/profile')
 @jwt_required()
 def get_profile():

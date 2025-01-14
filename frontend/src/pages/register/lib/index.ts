@@ -7,7 +7,7 @@ export const registerToApi = async (params: RegisterForm) => {
         localStorage.setItem('auth_token', result.token);
     }
     // TODO: refactor it
-    if (result){
+    if (result && result.status !== 'ok'){
         window.alert(result.status);
     }
 
