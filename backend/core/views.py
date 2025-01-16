@@ -7,6 +7,7 @@ from core.models import User
 
 @app.after_request
 def refresh_expiring_jwts(response):
+    print('a')
     try:
         exp_timestamp = get_jwt()["exp"]
         now = datetime.now(timezone.utc)
@@ -72,7 +73,9 @@ def register_new_user():
 @jwt_required()
 def get_profile():
     login = get_jwt_identity()
-    user = db.session.execute(db.select(User).filter_by(login=login)).scalar_one()
-    return {
-        'nickname': user.nickname
-    }
+    user = db.session.execute(db.select(User).filter_by(login=login)).scalar_one_or_none()
+    if user:
+        return {
+            'nickname': user.nickname
+        }
+    return {}, 404
