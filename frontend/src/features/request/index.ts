@@ -1,19 +1,21 @@
 import { API_PATH } from "./const";
 import { ResponseBody } from "./types";
 
-// TODO: add types
-export async function getDataFromApi(path?: string) {
+export const getDataFromApi = async <T>(path?: string) => {
     try {
         const response = await fetch(API_PATH + (path ?? ""));
-        if (response.ok) {
-            const json = await response.json();
-            return json;
+
+        const result = (await response.json()) as ResponseBody<T>;
+        if (result.msg){
+            return null;
         }
+        // TODO: rewrite default error message filed from flask
+        return result as Omit<T, 'msg'>;
     } catch (error) {
         console.log(error);
     }
     return null;
-}
+};
 
 export const postRequestToApi = async <Params, Response>(
     path: string,
