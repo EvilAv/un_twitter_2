@@ -7,7 +7,6 @@ from core.models import User
 
 @app.after_request
 def refresh_expiring_jwts(response):
-    print('a')
     try:
         exp_timestamp = get_jwt()["exp"]
         now = datetime.now(timezone.utc)
