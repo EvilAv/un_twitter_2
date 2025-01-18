@@ -36,7 +36,6 @@ export const MyPosts = ({ userId, userName }: Props) => {
                     }])
                     setText('');
                     setIsPublishMode(false)
-                    console.log(newPosts)
                 }
             }
         },
