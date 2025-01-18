@@ -1,16 +1,18 @@
 import { API_PATH } from "./const";
 import { ResponseBody } from "./types";
 
-export const getDataFromApi = async <T>(path?: string) => {
+export const getDataFromApi = async <T>(path?: string, params?: string) => {
     try {
-        const response = await fetch(API_PATH + (path ?? ""));
+        const response = await fetch(
+            API_PATH + (path || "") + "?" + (params || "")
+        );
 
         const result = (await response.json()) as ResponseBody<T>;
-        if (result.msg){
+        if (result.msg) {
             return null;
         }
         // TODO: rewrite default error message filed from flask
-        return result as Omit<T, 'msg'>;
+        return result as Omit<T, "msg">;
     } catch (error) {
         console.log(error);
     }
@@ -34,7 +36,7 @@ export const postRequestToApi = async <Params, Response>(
         if (!result.msg) {
             return result as Omit<Response, "msg">;
         }
-        console.log('backend error', result.msg);
+        console.log("backend error", result.msg);
     } catch (error) {
         console.log(error);
     }
@@ -44,7 +46,7 @@ export const postRequestToApi = async <Params, Response>(
 export const getDataFromApiWithJWT = async <T>(path?: string) => {
     try {
         const token = localStorage.getItem("auth_token");
-        if (!token){
+        if (!token) {
             return null;
         }
 
@@ -55,13 +57,13 @@ export const getDataFromApiWithJWT = async <T>(path?: string) => {
         });
 
         const result = (await response.json()) as ResponseBody<T>;
-        if (result.msg){
+        if (result.msg) {
             return null;
         }
-        if (result.token){
-            localStorage.setItem('auth_token', result.token);
+        if (result.token) {
+            localStorage.setItem("auth_token", result.token);
         }
-        return result as Omit<T, 'msg' | 'token'>;
+        return result as Omit<T, "msg" | "token">;
     } catch (error) {
         console.log(error);
     }

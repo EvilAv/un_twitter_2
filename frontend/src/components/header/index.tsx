@@ -3,32 +3,15 @@ import React, { useCallback, useEffect, useState } from "react";
 type Props = {
     isAuthenticated: boolean;
     onLogout: () => void;
-    onLogin: () => void;
-};
-
-type Data = {
     nickname: string;
-}
+};
 
 import styles from "./styles.module.css";
 import { useNavigate } from "react-router";
-import { getDataFromApiWithJWT } from "../../features/request";
 import { Logo } from "../logo";
 
-export const Header = ({ isAuthenticated, onLogout, onLogin}: Props) => {
+export const Header = ({ isAuthenticated, onLogout, nickname }: Props) => {
     const navigate = useNavigate();
-    const [nickname, setNickname] = useState<string | null>(null);
-
-    useEffect(() => {
-        async function getData() {
-            const data = await getDataFromApiWithJWT<Data>('/profile');
-            if (data){
-                setNickname(data.nickname);
-                onLogin();
-            }
-        }
-        getData();
-    }, [isAuthenticated, onLogin])
 
     const onLoginClick = useCallback(() => {
         navigate("/login");
@@ -39,10 +22,16 @@ export const Header = ({ isAuthenticated, onLogout, onLogin}: Props) => {
         onLogout();
     }, []);
 
+    const navigateToMyPosts = useCallback((event: React.MouseEvent) => {
+        event.preventDefault();
+        navigate("/my-posts");
+    }, []);
+
     return (
         <header className={styles.root}>
             <Logo />
             {isAuthenticated && <div>{nickname}</div>}
+            <a href="" onClick={navigateToMyPosts}>my posts</a>
             {isAuthenticated ? (
                 <button onClick={onLogoutClick}>logout</button>
             ) : (
