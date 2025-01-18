@@ -55,7 +55,12 @@ export const App = () => {
                     {isAuthenticated && data && (
                         <Route
                             path="/my-posts"
-                            element={<MyPosts userId={data.id} />}
+                            element={
+                                <MyPosts
+                                    userId={data.id}
+                                    userName={data.nickname}
+                                />
+                            }
                         />
                     )}
                 </Routes>

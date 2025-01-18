@@ -7,9 +7,10 @@ import styles from "./styles.module.css";
 
 type Props = {
     userId?: number;
+    newPosts?: TPost[];
 };
 
-export const PostList = ({ userId }: Props) => {
+export const PostList = ({ userId, newPosts= [] }: Props) => {
     const [posts, setPosts] = useState<TPost[]>([]);
 
     useEffect(() => {
@@ -19,10 +20,12 @@ export const PostList = ({ userId }: Props) => {
             setPosts(data);
         });
     }, [userId]);
+
+    const allPosts = [...posts, ...newPosts];
     return (
         <div className={styles.root}>
-            {posts.length > 0 ? (
-                posts.map((post) => (
+            {allPosts.length > 0 ? (
+                allPosts.map((post) => (
                     <Post
                         key={post.id}
                         text={post.text}

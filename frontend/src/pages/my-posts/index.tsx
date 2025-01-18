@@ -8,12 +8,13 @@ import { TPost } from "../../features/posts/types";
 
 type Props = {
     userId: number;
+    userName: string;
 };
 
-export const MyPosts = ({ userId }: Props) => {
+export const MyPosts = ({ userId, userName }: Props) => {
     const [isPublishMode, setIsPublishMode] = useState(false);
     const [text, setText] = useState("");
-    // TODO: add optimistic posts saving
+
     const [newPosts, setNewPosts] = useState<TPost[]>([]);
 
     const onSubmit = useCallback(
@@ -27,11 +28,19 @@ export const MyPosts = ({ userId }: Props) => {
                     text: text.trim(),
                 });
                 if (result && result.status === "ok") {
-                    window.location.reload();
+                    setNewPosts([...newPosts, {
+                        id: result.id,
+                        text: text.trim(),
+                        authorId: userId,
+                        authorName: userName,
+                    }])
+                    setText('');
+                    setIsPublishMode(false)
+                    console.log(newPosts)
                 }
             }
         },
-        [text]
+        [text, newPosts, setNewPosts, setText]
     );
 
     const onTextChanged = useCallback(
@@ -47,7 +56,7 @@ export const MyPosts = ({ userId }: Props) => {
     return (
         <>
             <h1>My posts</h1>
-            <PostList userId={userId} />
+            <PostList userId={userId} newPosts={newPosts}/>
             {!isPublishMode && (
                 <button
                     className={styles.btn}

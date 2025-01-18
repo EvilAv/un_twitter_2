@@ -13,8 +13,8 @@ def all_posts():
     if user_id:
         posts = db.session.execute(db.select(Post).filter_by(user_id=int(user_id))).scalars().all()
         # user = db.session.execute(db.select(User).filter_by(id=int(user_id))).scalar_one_or_none()
-    #     if user:
-    #         posts = user.posts
+        #     if user:
+        #         posts = user.posts
     else:
         posts = db.session.execute(db.select(Post)).scalars().all()
 
@@ -33,10 +33,9 @@ def add_post():
         db.session.add(new_post)
         db.session.commit()
 
-        token = create_access_token(identity=str(user.id))
         return {
             'status': 'ok',
-            'token': token,
+            'id': new_post.id,
         }
     return {
         'status': 'wrong!'

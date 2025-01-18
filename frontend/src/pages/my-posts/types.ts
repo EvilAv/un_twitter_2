@@ -1,6 +1,6 @@
 export type PostResponse = { 
     status: string,
-    token?: string,
+    id: number,
 }
 
 export type PostFrom = {
