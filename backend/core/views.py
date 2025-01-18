@@ -38,7 +38,7 @@ def create_token():
         user = db.session.execute(db.select(User).filter_by(login=login)).scalar_one_or_none()
         if user and bcrypt.check_password_hash(user.password_hash, password):
             print('ok')
-            token = create_access_token(identity=login)
+            token = create_access_token(identity=str(user.id))
             return {
                 'token': token,
             }
@@ -59,7 +59,7 @@ def register_new_user():
         db.session.add(new_user)
         db.session.commit()
 
-        token = create_access_token(identity=login)
+        token = create_access_token(identity=str(new_user.id))
         return {
             'status': 'ok',
             'token': token,
@@ -71,8 +71,8 @@ def register_new_user():
 @app.route('/profile')
 @jwt_required()
 def get_profile():
-    login = get_jwt_identity()
-    user = db.session.execute(db.select(User).filter_by(login=login)).scalar_one_or_none()
+    id = int(get_jwt_identity())
+    user = db.session.execute(db.select(User).filter_by(id=id)).scalar_one_or_none()
     if user:
         return {
             'nickname': user.nickname,

@@ -1,17 +1,10 @@
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from flask import jsonify, request
 from core.models import User
 from post.models import Post
 from post import post
 from post.serializers import serialize_post
 from core import db
-
-@post.route('/test')
-@jwt_required()
-def test_post():
-    return {
-        'test': 'test'
-    }
 
 @post.route('/all')
 def all_posts():
@@ -28,3 +21,23 @@ def all_posts():
     # TODO: add data field to endpoint responses
 
     return jsonify(list(map(serialize_post, posts)))
+
+@post.route('/create', methods=['POST'])
+@jwt_required()
+def add_post():
+    id = int(get_jwt_identity())
+    user = db.session.execute(db.select(User).filter_by(id=id)).scalar_one_or_none()
+    text = request.json.get('text', None)
+    if user and text:
+        new_post = Post(text=text, author=user)
+        db.session.add(new_post)
+        db.session.commit()
+
+        token = create_access_token(identity=str(user.id))
+        return {
+            'status': 'ok',
+            'token': token,
+        }
+    return {
+        'status': 'wrong!'
+    }, 401
