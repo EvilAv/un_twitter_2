@@ -7,9 +7,9 @@ import styles from "./styles.module.css";
 
 type Props = {
     userId?: number;
-}
+};
 
-export const PostList = ({userId}: Props) => {
+export const PostList = ({ userId }: Props) => {
     const [posts, setPosts] = useState<TPost[]>([]);
 
     useEffect(() => {
@@ -20,8 +20,9 @@ export const PostList = ({userId}: Props) => {
         });
     }, [userId]);
     return (
-            <div className={styles.root}>
-                {posts.map((post) => (
+        <div className={styles.root}>
+            {posts.length > 0 ? (
+                posts.map((post) => (
                     <Post
                         key={post.id}
                         text={post.text}
@@ -29,7 +30,10 @@ export const PostList = ({userId}: Props) => {
                         authorName={post.authorName}
                         id={post.id}
                     />
-                ))}
-            </div>
+                ))
+            ) : (
+                <div>:(</div>
+            )}
+        </div>
     );
 };

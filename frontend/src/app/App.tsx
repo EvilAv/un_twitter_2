@@ -5,7 +5,7 @@ import { Home } from "../pages/home";
 import { Login } from "../pages/login";
 import { Register } from "../pages/register";
 import { getDataFromApiWithJWT } from "../features/request";
-import { MyPosts } from "../pages/my-posts/inex";
+import { MyPosts } from "../pages/my-posts/index";
 
 type Data = {
     nickname: string;

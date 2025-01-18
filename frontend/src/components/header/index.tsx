@@ -31,7 +31,7 @@ export const Header = ({ isAuthenticated, onLogout, nickname }: Props) => {
         <header className={styles.root}>
             <Logo />
             {isAuthenticated && <div>{nickname}</div>}
-            <a href="" onClick={navigateToMyPosts}>my posts</a>
+            {isAuthenticated && <a href="" onClick={navigateToMyPosts}>my posts</a>}
             {isAuthenticated ? (
                 <button onClick={onLogoutClick}>logout</button>
             ) : (
