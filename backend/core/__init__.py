@@ -38,4 +38,7 @@ from post import post as post_blueprint
 
 app.register_blueprint(post_blueprint)
 
+from emotions import emotions as emo_blueprint
+app.register_blueprint(emo_blueprint)
+
 from core import views, models
