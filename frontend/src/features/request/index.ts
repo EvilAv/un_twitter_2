@@ -19,9 +19,9 @@ export const getDataFromApi = async <T>(path?: string, params?: string) => {
     return null;
 };
 
-export const postRequestToApi = async <Params, Response>(
+export const postRequestToApi = async <Body, Response>(
     path: string,
-    params: Params
+    body: Body
 ) => {
     try {
         const response = await fetch(API_PATH + path, {
@@ -29,7 +29,7 @@ export const postRequestToApi = async <Params, Response>(
             headers: {
                 "Content-Type": "application/json;charset=utf-8",
             },
-            body: JSON.stringify(params),
+            body: JSON.stringify(body),
         });
 
         const result = (await response.json()) as ResponseBody<Response>;
@@ -37,6 +37,40 @@ export const postRequestToApi = async <Params, Response>(
             return result as Omit<Response, "msg">;
         }
         console.log("backend error", result.msg);
+    } catch (error) {
+        console.log(error);
+    }
+    return null;
+};
+
+// TODO: add withJWT wrapper
+export const postRequestToApiWithJWT = async <Body, Response>(
+    path: string,
+    body: Body
+) => {
+    try {
+        const token = localStorage.getItem("auth_token");
+        if (!token) {
+            return null;
+        }
+
+        const response = await fetch(API_PATH + path, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(body),
+        });
+
+        const result = (await response.json()) as ResponseBody<Response>;
+        if (result.msg) {
+            return null;
+        }
+        if (result.token) {
+            localStorage.setItem("auth_token", result.token);
+        }
+        return result as Omit<Response, "msg" | "token">;
     } catch (error) {
         console.log(error);
     }

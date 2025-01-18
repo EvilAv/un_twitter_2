@@ -5,7 +5,7 @@ export type RegisterForm = {
     password2: string,
 }
 
-export type RegisterResponse ={ 
+export type RegisterResponse = { 
     status: string,
     token?: string,
 }
