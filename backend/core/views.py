@@ -75,6 +75,7 @@ def get_profile():
     user = db.session.execute(db.select(User).filter_by(login=login)).scalar_one_or_none()
     if user:
         return {
-            'nickname': user.nickname
+            'nickname': user.nickname,
+            'id': user.id
         }
     return {}, 404
