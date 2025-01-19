@@ -4,4 +4,6 @@ __pycache__
 backend/migrations
 backend/base.db
 
+*.keras
+
 node_modules

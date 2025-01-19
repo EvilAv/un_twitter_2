@@ -10,7 +10,7 @@ export const Post = ({ authorName, text, id }: TPost) => {
     useEffect(() => {
         getOneEmotion(id).then((emo) => setEmotion(emo));
     }, [setEmotion]);
-    console.log(emotion);
+
     return (
         <div className={styles.root}>
             <div className={styles.header}>
