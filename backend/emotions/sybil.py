@@ -8,7 +8,7 @@ import keras
 
 # TODO: refactor all this part, cause it works weird as hell
 
-WORD_CNT = 40
+WORD_CNT = 100
 
 # really loooooooong even if it downloaded before
 model = g_api.load("glove-twitter-25")
@@ -19,7 +19,7 @@ model = g_api.load("glove-twitter-25")
 def word_to_vector(word):
     if model.has_index_for(word) and word != '':
         return model[word]
-    return np.zeros(25)
+    return np.zeros(25).astype('float32')
 
 # looks like sometimes it causes errors, maybe need to use something another
 # it causes race conditions, so first few requests will fail with 500
@@ -48,7 +48,8 @@ def prepocess(text: str):
     tokens = [t for t in tokens if t not in string.punctuation]
 
     stop_words = set(nltk.corpus.stopwords.words('english'))
-    filtered_tokens = [t for t in tokens if t not in stop_words]
+    deny_words = set(['no', 'not'])
+    filtered_tokens = [t for t in tokens if t not in stop_words or t in deny_words]
 
     pos_tokens = nltk.pos_tag(filtered_tokens)
 
@@ -61,7 +62,11 @@ def prepocess(text: str):
 
 
 def get_data(path):
-    df = pd.read_csv(path, sep=';', header=None, names=['Text', 'Emotion'])
+    df = pd.read_csv(path, sep=',', header=None, names=['Emotion', 'Text' ])
+
+    df.drop(df[df['Emotion'] == 'guilt'].index, inplace=True)
+    df.drop(df[df['Emotion'] == 'shame'].index, inplace=True)
+
     emotion_set = set(df['Emotion'].to_list())
     emotion_code = {i.name: i.value for i in Emotion}
 
@@ -72,8 +77,9 @@ def get_data(path):
     text_arr = df['Text']
     # tokens_arr = map(prepocess, text_arr)
     tokens_arr = map(prepocess, text_arr)
-    X = [[ word_to_vector(t) for t in sent] for sent in tokens_arr]
-    X = np.array([np.array(x_i) for x_i in X])
+    # print(list(tokens_arr))
+    X = [np.array([ word_to_vector(t) for t in sent]) for sent in tokens_arr]
+    X = np.array(X)
     Y = matrix[df['Emotion']]
     return X, Y
 
@@ -104,7 +110,36 @@ def train():
     print()
     net.evaluate(X_test,Y_test, batch_size=1)
 
-# train()
+def train2():
+    [X, Y] = get_data('./data/isear.csv')
+    # print(Y)
+    X_train = X[:int(X.shape[0] * 0.8)]
+    Y_train = Y[:int(Y.shape[0] * 0.8)]
+    X_test = X[int(X.shape[0] * 0.8):]
+    Y_test = Y[int(Y.shape[0] * 0.8):]
+
+    # print(X_test[0], Y_test[0])
+    # [X_test, Y_test] = get_data('./data/test.csv')
+
+    net = keras.Sequential()
+    # net.add(keras.layers.Bidirectional(keras.layers.Embedding()))
+    # False cause we use only one layer, if we use more, then False should be only in the last one
+    # net.add(keras.layers.Bidirectional(keras.layers.LSTM(100, return_sequences=True)))
+    # net.add(keras.layers.Dropout(0.1))
+    # net.add(keras.layers.Bidirectional(keras.layers.LSTM(200, return_sequences=True)))
+    # net.add(keras.layers.Dropout(0.1))
+    net.add(keras.layers.Bidirectional(keras.layers.LSTM(100, return_sequences=False)))
+    net.add(keras.layers.Dropout(0.1))
+    # number of emotions
+    net.add(keras.layers.Dense(5))
+    net.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+    net.fit(X_train,Y_train, epochs=30, batch_size=64)
+
+    net.save('./bb.keras')
+    net.evaluate(X_test,Y_test, batch_size=1)
+
+# train2()
 
 # df = pd.read_csv('./data/train.csv', sep=';', header=None, names=['Text', 'Emotion'])
 # print(df.groupby(['Emotion']).count())

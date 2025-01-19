@@ -10,7 +10,7 @@ import numpy as np
 
 # for some reasons file can't be called types.py ¯\_(ツ)_/¯
 basedir = os.path.abspath(os.path.dirname(__file__))
-net = keras.models.load_model(os.path.join(basedir, 'a.keras'))
+net = keras.models.load_model(os.path.join(basedir, 'bb.keras'))
 
 @emotions.route('/one')
 def get_one_emotion():
@@ -18,6 +18,7 @@ def get_one_emotion():
     if post_id:
         post = db.session.execute(db.select(Post).filter_by(id=int(post_id))).scalar_one_or_none()
         if post and net:
+            # by the way there is lib for js for same thing
             tokens = prepocess(post.text)
             vec = [word_to_vector(t) for t in tokens]
             # to fix shape

@@ -6,7 +6,8 @@ class Emotion(enum.Enum):
     # anger = 3
     anger = 0
     sadness = 1
-    surprise = 2
-    love = 3
-    joy = 4
-    fear = 5
+    # surprise = 2
+    disgust = 2
+    # love = 3
+    joy = 3
+    fear = 4

@@ -18,25 +18,30 @@ const getFullEmotion = (name: EmotionName): TEmotion => {
                 emotion: name,
                 emoji: "🤬",
             };
-        case 'fear':
+        case "fear":
             return {
                 emotion: name,
-                emoji: '😱',
+                emoji: "😱",
             };
-        case 'love':
+        case "love":
             return {
                 emotion: name,
-                emoji: '🥰',
+                emoji: "🥰",
             };
-        case 'sadness':
+        case "sadness":
             return {
                 emotion: name,
-                emoji: '😢',
+                emoji: "😢",
             };
-        case 'surprise':
+        case "surprise":
             return {
                 emotion: name,
-                emoji: '😮',
+                emoji: "😮",
+            };
+        case "disgust":
+            return {
+                emotion: name,
+                emoji: "🤢",
             };
     }
 };
