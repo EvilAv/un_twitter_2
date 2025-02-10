@@ -1,41 +1,40 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { loginToApi } from "../../features/login";
 
 import style from './style.module.css'
+import { useUnit } from "effector-react";
+import { $isAuthenticated, userLoginFormFilled } from "../../features/user/state";
 
 type LoginFormData = {
     login: string | null;
     password: string | null;
 };
 
-type Props = {
-    onLogin: () => void;
-};
-
-export const Login = ({ onLogin }: Props) => {
+export const Login = () => {
     const [loginFormData, setLoginFormData] = useState<LoginFormData>({
         login: null,
         password: null,
     });
     const navigate = useNavigate();
+    const login = useUnit(userLoginFormFilled);
+    const isAuthenticated = useUnit($isAuthenticated);
 
     // TODO: refactor that shit
-    const onSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (loginFormData.login && loginFormData.password) {
-            // need to implement new effect in user slice, maybe also add effect to logout
-            const token = await loginToApi({
+            login({
                 login: loginFormData.login,
                 password: loginFormData.password,
-            });
-
-            if (token) {
-                onLogin();
-                navigate("/");
-            }
+            })
         }
     }, [loginFormData]);
+
+    useEffect(() => {
+        if (isAuthenticated){
+            navigate('/')
+        }
+    }, [isAuthenticated])
 
     const onLoginChanged = useCallback(
         (event: React.ChangeEvent<HTMLInputElement>) => {

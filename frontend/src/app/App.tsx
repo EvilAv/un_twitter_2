@@ -16,7 +16,6 @@ type Data = {
 };
 
 export const App = () => {
-
     const appStart = useUnit(appStarted);
     const userData = useUnit($user);
     const isAuthenticated = useUnit($isAuthenticated);
@@ -24,22 +23,15 @@ export const App = () => {
     useEffect(() => {
         // looks like we need to abort effect and promise
         appStart();
-        
     }, []);
 
     return (
         <>
             <BrowserRouter>
-                <Header/>
+                <Header />
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    {/* <Route
-                        path="/login"
-                        element={
-                            // maybe should refactor
-                            <Login onLogin={() => setIsAuthenticated(true)} />
-                        }
-                    /> */}
+                    <Route path="/login" element={<Login />} />
                     {/* <Route
                         path="/register"
                         element={
