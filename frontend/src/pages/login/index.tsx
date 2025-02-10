@@ -24,6 +24,7 @@ export const Login = ({ onLogin }: Props) => {
     const onSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (loginFormData.login && loginFormData.password) {
+            // need to implement new effect in user slice, maybe also add effect to logout
             const token = await loginToApi({
                 login: loginFormData.login,
                 password: loginFormData.password,

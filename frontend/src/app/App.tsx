@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Header } from "../components/header";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { Home } from "../pages/home";
@@ -6,6 +6,9 @@ import { Login } from "../pages/login";
 import { Register } from "../pages/register";
 import { getDataFromApiWithJWT } from "../features/request";
 import { MyPosts } from "../pages/my-posts/index";
+import { useUnit } from "effector-react";
+import { appStarted } from "./state";
+import { $isAuthenticated, $user } from "../features/user/state";
 
 type Data = {
     nickname: string;
@@ -13,38 +16,31 @@ type Data = {
 };
 
 export const App = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [data, setData] = useState<Data | null>(null);
+
+    const appStart = useUnit(appStarted);
+    const userData = useUnit($user);
+    const isAuthenticated = useUnit($isAuthenticated);
 
     useEffect(() => {
-        async function getData() {
-            const data = await getDataFromApiWithJWT<Data>("/profile");
-            if (data) {
-                setData(data);
-                setIsAuthenticated(true);
-            }
-        }
-        getData();
-    }, [isAuthenticated]);
+        // looks like we need to abort effect and promise
+        appStart();
+        
+    }, []);
 
     return (
         <>
             <BrowserRouter>
-                <Header
-                    isAuthenticated={isAuthenticated}
-                    onLogout={() => setIsAuthenticated(false)}
-                    nickname={data?.nickname || ""}
-                />
+                <Header/>
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route
+                    {/* <Route
                         path="/login"
                         element={
                             // maybe should refactor
                             <Login onLogin={() => setIsAuthenticated(true)} />
                         }
-                    />
-                    <Route
+                    /> */}
+                    {/* <Route
                         path="/register"
                         element={
                             <Register
@@ -62,7 +58,7 @@ export const App = () => {
                                 />
                             }
                         />
-                    )}
+                    )} */}
                 </Routes>
             </BrowserRouter>
         </>
