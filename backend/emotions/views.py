@@ -1,5 +1,6 @@
 import os
 from flask import request
+from core.errors import make_json_error
 from post.models import Post
 from emotions import emotions
 from emotions.type import Emotion
@@ -38,4 +39,4 @@ def get_one_emotion():
             return {
                 'emotion': Emotion(random.choice(range(5))).name
             }
-    return {}, 404
+    return make_json_error('user not found', 404)

@@ -1,5 +1,6 @@
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask import jsonify, request
+from core.errors import make_json_error
 from core.models import User
 from post.models import Post
 from post import post
@@ -27,16 +28,17 @@ def all_posts():
 def add_post():
     id = int(get_jwt_identity())
     user = db.session.execute(db.select(User).filter_by(id=id)).scalar_one_or_none()
-    text = request.json.get('text', None)
-    if user and text:
-        new_post = Post(text=text, author=user)
-        db.session.add(new_post)
-        db.session.commit()
+    if not user:
+        return make_json_error('user not found', 404)
 
-        return {
-            'status': 'ok',
-            'id': new_post.id,
-        }
+    text = request.json.get('text', None)
+    if not text or text.strip() == '':
+        return make_json_error('empty text provided', 400)
+
+    new_post = Post(text=text, author=user)
+    db.session.add(new_post)
+    db.session.commit()
+
     return {
-        'status': 'wrong!'
-    }, 401
+        'id': new_post.id,
+    }
