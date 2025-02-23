@@ -9,11 +9,7 @@ import { MyPosts } from "../pages/my-posts/index";
 import { useUnit } from "effector-react";
 import { appStarted } from "./state";
 import { $isAuthenticated, $user } from "../features/user/state";
-
-type Data = {
-    nickname: string;
-    id: number;
-};
+import { ToastContainer } from "react-toastify";
 
 export const App = () => {
     const appStart = useUnit(appStarted);
@@ -27,6 +23,7 @@ export const App = () => {
 
     return (
         <>
+            <ToastContainer />
             <BrowserRouter>
                 <Header />
                 <Routes>
