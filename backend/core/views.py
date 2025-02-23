@@ -48,6 +48,8 @@ def create_token():
         token = create_access_token(identity=str(user.id))
         return {
             'token': token,
+            'nickname': user.nickname,
+            'id': user.id
         }
     return make_json_error('wrong password', 401)
 

@@ -3,7 +3,7 @@ export type User = {
     id: number,
 }
 
-export type UserLoginResponse = {
+export type UserLoginResponse = User & {
     token: string;
 }
 

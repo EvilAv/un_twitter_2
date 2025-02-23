@@ -2,6 +2,7 @@ import { createEffect, createEvent, createStore, sample } from "effector";
 import { User, UserLoginForm } from "./types";
 import { getDataFromApiWithJWT } from "../request";
 import { loginUserToApi } from "./lib/login-user-to-api";
+import { $errors } from "../errors/state";
 
 export const $user = createStore<User | null>(null);
 export const $isAuthenticated = $user.map((user) => Boolean(user));
@@ -15,8 +16,8 @@ export const getUserDataFx = createEffect(async() => {
 });
 
 export const loginUserToApiFx = createEffect(async(params: UserLoginForm) => {
-    const token = await loginUserToApi(params);
-    return token;
+    const user = await loginUserToApi(params);
+    return user as User;
 })
 
 sample({
@@ -26,8 +27,7 @@ sample({
 
 sample({
     source: loginUserToApiFx.doneData,
-    filter: (token) => Boolean(token),
-    target: getUserDataFx,
+    target: $user,
 })
 
 $user
@@ -35,3 +35,15 @@ $user
     .on(userCleared, () => null)
 
 $user.watch(console.log)
+
+sample({
+    clock: getUserDataFx.failData,
+    fn: (error) => error.message,
+    target: $errors,
+})
+
+sample({
+    clock: loginUserToApiFx.failData,
+    fn: (error) => error.message,
+    target: $errors,
+})
