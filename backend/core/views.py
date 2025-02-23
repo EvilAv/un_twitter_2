@@ -58,6 +58,9 @@ def register_new_user():
     login = request.json.get('login', None)
     if not login:
         return make_json_error('no login', 400)
+    old_user = db.session.execute(db.select(User).filter_by(login=login)).scalar_one_or_none()
+    if old_user:
+        return make_json_error('user already exists', 403)
 
     nickname = request.json.get('nickname', None)
     if not nickname:
@@ -65,7 +68,8 @@ def register_new_user():
 
     password1 = request.json.get('password1', None)
     password2 = request.json.get('password2', None)
-    if not password1 or password2:
+    # cause thats how de morgan works
+    if not (password1 and password2):
         return make_json_error('no password', 400)
     if password1 != password2:
         return make_json_error('passwords are not equal', 400)

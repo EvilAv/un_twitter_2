@@ -1,12 +1,9 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { registerToApi } from "./lib";
 
 import style from './style.module.css'
-
-type Props = {
-    onLogin: () => void;
-};
+import { useUnit } from "effector-react";
+import { $isAuthenticated, userRegisterFormFilled } from "../../features/user/state";
 
 // TODO: make some type generic for it
 type RegisterFromData = {
@@ -16,7 +13,7 @@ type RegisterFromData = {
     password2: string | null;
 };
 // TODO: move to react forms
-export const Register = ({ onLogin }: Props) => {
+export const Register = () => {
     const [registerFormData, setRegisterFormData] = useState<RegisterFromData>({
         login: null,
         nickname: null,
@@ -24,6 +21,14 @@ export const Register = ({ onLogin }: Props) => {
         password2: null,
     });
     const navigate = useNavigate();
+    const isAuthenticated = useUnit($isAuthenticated);
+    const register = useUnit(userRegisterFormFilled);
+
+    useEffect(() => {
+        if (isAuthenticated){
+            navigate('/')
+        }
+    }, [isAuthenticated])
 
     // TODO: refactor that shit
     const onSubmit = useCallback(
@@ -36,20 +41,16 @@ export const Register = ({ onLogin }: Props) => {
                 registerFormData.password2
             ) {
                 if ( registerFormData.password1 !== registerFormData.password2){
+                    // add toast here
                     window.alert('Passwords should match');
                     return;
                 }
-                const token = await registerToApi({
+                register({
                     login: registerFormData.login,
                     nickname: registerFormData.nickname,
                     password1: registerFormData.password1,
                     password2: registerFormData.password2,
                 });
-
-                if (token) {
-                    onLogin();
-                    navigate("/");
-                }
             }
         },
         [registerFormData]

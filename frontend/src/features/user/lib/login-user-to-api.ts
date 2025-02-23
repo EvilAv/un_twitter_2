@@ -9,6 +9,5 @@ export async function loginUserToApi(loginForm: UserLoginForm) {
         loginForm
     );
     setAuthToken(result.token);
-
     return result;
 }

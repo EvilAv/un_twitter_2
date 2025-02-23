@@ -32,15 +32,8 @@ export const App = () => {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
-                    {/* <Route
-                        path="/register"
-                        element={
-                            <Register
-                                onLogin={() => setIsAuthenticated(true)}
-                            />
-                        }
-                    />
-                    {isAuthenticated && data && (
+                    <Route path="/register" element={<Register />} />
+                    {/* {isAuthenticated && data && (
                         <Route
                             path="/my-posts"
                             element={
