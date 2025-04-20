@@ -1,5 +1,7 @@
-export const setAuthToken = <T>(token: string) => {
+import { AUTH_TOKEN } from "../const";
+
+export const setAuthToken = (token: string) => {
     if (token.trim() !== '') {
-        localStorage.setItem("auth_token", token);
+        localStorage.setItem(AUTH_TOKEN, token);
     }
 }

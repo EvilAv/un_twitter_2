@@ -5,6 +5,7 @@ import { loginUserToApi } from "./lib/login-user-to-api";
 import { $errors } from "../errors/state";
 import { registerUserToApi } from "./lib/register-user-to-api";
 import { showToast } from "../toasts";
+import { removeAuthToken } from "../request/lib/remove-auth-token";
 
 export const $user = createStore<User | null>(null);
 export const $isAuthenticated = $user.map((user) => Boolean(user));
@@ -30,6 +31,8 @@ export const registerUserToApiFx = createEffect(
     }
 );
 
+export const clearUserTokenFx = createEffect(removeAuthToken);
+
 sample({
     clock: userLoginFormFilled,
     target: loginUserToApiFx,
@@ -50,7 +53,14 @@ sample({
     target: $user,
 });
 
-$user.on(getUserDataFx.doneData, (_, user) => user).on(userCleared, () => null);
+$user
+    .on(getUserDataFx.doneData, (_, user) => user)
+    .on(userCleared, () => null);
+
+sample({
+    clock: userCleared,
+    target: clearUserTokenFx,
+});
 
 $user.watch(console.log);
 
@@ -58,6 +68,11 @@ sample({
     clock: getUserDataFx.failData,
     fn: (error) => error.message,
     target: $errors,
+});
+
+sample({
+    clock: getUserDataFx.failData,
+    target: userCleared,
 });
 
 sample({

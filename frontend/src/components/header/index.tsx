@@ -17,7 +17,6 @@ export const Header = () => {
     }, []);
 
     const onLogoutClick = useCallback(() => {
-        localStorage.removeItem("auth_token");
         logout();
     }, []);
 

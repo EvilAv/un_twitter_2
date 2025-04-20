@@ -1,10 +1,15 @@
 from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, jwt_required
-from core import app, db, bcrypt
+from core import app, db, bcrypt, jwt
 from core.errors import make_json_error
 from flask import json, request
 
 from core.models import User
+
+
+@jwt.invalid_token_loader
+def invalid_token_callback(error):
+    return make_json_error('token has expired', 401)
 
 @app.after_request
 def refresh_expiring_jwts(response):
