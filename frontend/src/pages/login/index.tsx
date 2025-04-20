@@ -1,34 +1,31 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useForm, SubmitHandler } from "react-hook-form"
 
 import style from './style.module.css'
 import { useUnit } from "effector-react";
 import { $isAuthenticated, userLoginFormFilled } from "../../features/user/state";
+import { emptyStringValidator } from "../../features/forms/validators";
 
 type LoginFormData = {
-    login: string | null;
-    password: string | null;
+    login: string;
+    password: string;
 };
 
+
 export const Login = () => {
-    const [loginFormData, setLoginFormData] = useState<LoginFormData>({
-        login: null,
-        password: null,
-    });
+    const {register, handleSubmit, formState: { errors },} = useForm<LoginFormData>();
+    const onSubmit: SubmitHandler<LoginFormData> = (data) => {
+        console.log(data)
+        login({
+            login: data.login,
+            password: data.password,
+        })
+    }
+
     const navigate = useNavigate();
     const login = useUnit(userLoginFormFilled);
     const isAuthenticated = useUnit($isAuthenticated);
-
-    // TODO: refactor that shit
-    const onSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (loginFormData.login && loginFormData.password) {
-            login({
-                login: loginFormData.login,
-                password: loginFormData.password,
-            })
-        }
-    }, [loginFormData]);
 
     useEffect(() => {
         if (isAuthenticated){
@@ -36,35 +33,6 @@ export const Login = () => {
         }
     }, [isAuthenticated])
 
-    const onLoginChanged = useCallback(
-        (event: React.ChangeEvent<HTMLInputElement>) => {
-            const { value } = event.target;
-            const login = value.trim();
-
-            if (login || login.length > 0) {
-                setLoginFormData({ ...loginFormData, login });
-            }
-            if (login.length === 0){
-                setLoginFormData({ ...loginFormData, login: null });
-            }
-        },
-        [setLoginFormData, loginFormData]
-    );
-
-    const onPasswordChanged = useCallback(
-        (event: React.ChangeEvent<HTMLInputElement>) => {
-            const { value } = event.target;
-            const password = value.trim();
-
-            if (password || password.length > 0) {
-                setLoginFormData({ ...loginFormData, password });
-            }
-            if (password.length === 0){
-                setLoginFormData({ ...loginFormData, password: null });
-            }
-        },
-        [setLoginFormData, loginFormData]
-    );
 
     const navigateToRegisterPage = useCallback((event: React.MouseEvent) => {
         event.preventDefault();
@@ -74,21 +42,27 @@ export const Login = () => {
     return (
         <>
             <h1>Login</h1>
-            <form onSubmit={onSubmit} className={style.root}>
+            <form onSubmit={handleSubmit(onSubmit)} className={style.root}>
                 <input
                     type="text"
                     placeholder="Login"
-                    name="login"
-                    value={loginFormData.login || ""}
-                    onChange={onLoginChanged}
+                    {...register('login', {
+                        required: 'login - required field',
+                        validate: { emptyStringValidator }
+                    } )}
                 />
                 <input
                     type="password"
                     placeholder="Password"
-                    name="password"
-                    value={loginFormData.password || ""}
-                    onChange={onPasswordChanged}
+                    {...register('password', {
+                        required: 'password - required field', 
+                        validate: { emptyStringValidator }
+                    } )}
+                    // the variant below doesnt contain any text info about error, but maybe it is what we need 
+                    // {...register('password', {required: 'required field'} )}
                 />
+                <div>{errors.login?.message}</div>
+                <div>{errors.password?.message}</div>
                 <input type="submit" value="Log in"/>
             </form>
             <a href='' onClick={navigateToRegisterPage} className={style.link}>make an account</a>
