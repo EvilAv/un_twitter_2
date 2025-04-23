@@ -28,8 +28,7 @@ export const getDataFromApiWithJWT = async <T>(path?: string, params?: string) =
 };
 
 export const postDataToApi = async <R, B>(path?: string, params?: string, body?: B) => {
-    // not a best solution, need to refactor
-    const data = await postApiRequest<R, B>(path, params, {}, body);
+    const data = await postApiRequest<R, B>(path, params, {body});
 
     const successData = handleServerError(data);
 
@@ -37,37 +36,13 @@ export const postDataToApi = async <R, B>(path?: string, params?: string, body?:
 
 }
 
-// TODO: fix after returning my posts page
-export const postRequestToApiWithJWT = async <Body, Response>(
-    path: string,
-    body: Body
-) => {
-    try {
-        const token = localStorage.getItem("auth_token");
-        if (!token) {
-            return null;
-        }
+export const postDataToApiWithJWT = async <R, B>(path?: string, params?: string, body?: B) => {
+    const data = await withJWT(postApiRequest)<R, B>(path, params, {body});
 
-        const response = await fetch(API_PATH + path, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json;charset=utf-8",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(body),
-        });
+    const successData = handleServerError(data);
 
-        const result = (await response.json()) as ResponseBody<Response>;
-        if (result.msg) {
-            return null;
-        }
-        if (result.token) {
-            localStorage.setItem("auth_token", result.token);
-        }
-        return result as Omit<Response, "msg" | "token">;
-    } catch (error) {
-        console.log(error);
-    }
-    return null;
-};
+    return successData as PureResponseBody<R>;
+
+}
+
 

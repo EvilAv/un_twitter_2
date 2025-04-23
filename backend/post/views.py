@@ -30,7 +30,6 @@ def add_post():
     user = db.session.execute(db.select(User).filter_by(id=id)).scalar_one_or_none()
     if not user:
         return make_json_error('user not found', 404)
-
     text = request.json.get('text', None)
     if not text or text.strip() == '':
         return make_json_error('empty text provided', 400)
@@ -41,4 +40,7 @@ def add_post():
 
     return {
         'id': new_post.id,
+        'text': text,
+        'authorName': user.nickname,
+        'authorId': user.id
     }

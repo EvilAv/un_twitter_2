@@ -4,3 +4,7 @@ export type TPost = {
     authorName: string;
     authorId: number;
 }
+
+export type AddPostBody = {
+    text: string;
+}

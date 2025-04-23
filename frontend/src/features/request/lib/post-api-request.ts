@@ -4,8 +4,10 @@ import { RequestSender, ResponseBody } from "../types";
 export const postApiRequest: RequestSender = async<R, B> (
     path?: string,
     params?: string,
-    headers?: HeadersInit,
-    body?: B,
+    options?: {
+        headers?: HeadersInit,
+        body?: B,
+    }
 ) => {
     const response = await fetch(
         API_PATH + (path ?? "") + "?" + (params || ""),
@@ -13,9 +15,9 @@ export const postApiRequest: RequestSender = async<R, B> (
             method: 'POST',
             headers: {
                 "Content-Type": "application/json;charset=utf-8",
-                ...headers,
+                ...options?.headers,
             },
-            body: JSON.stringify(body),
+            body: JSON.stringify(options?.body),
         }
     );
 

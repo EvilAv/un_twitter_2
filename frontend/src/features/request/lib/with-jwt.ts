@@ -7,9 +7,10 @@ export const withJWT = (sender: RequestSender) => {
         throw Error(UnauthorizedError);
     }
 
-    const handlerWithJWT: RequestSender = (path, params) =>
+    const handlerWithJWT: RequestSender = (path, params, options) =>
         sender(path, params, {
-            Authorization: `Bearer ${token}`,
+            headers: { ...options?.headers, Authorization: `Bearer ${token}` },
+            body: options?.body,
         });
 
     return handlerWithJWT;

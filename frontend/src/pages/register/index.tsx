@@ -8,7 +8,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { emptyStringValidator } from "../../features/forms/validators";
 
 // TODO: make some type generic for it
-type RegisterFromData = {
+type RegisterFormData = {
     login: string;
     nickname: string;
     password1: string;
@@ -16,9 +16,9 @@ type RegisterFromData = {
 };
 // TODO: move to react forms
 export const Register = () => {
-    const {register, handleSubmit, formState: { errors }, reset} = useForm<RegisterFromData>();
+    const {register, handleSubmit, formState: { errors }, reset} = useForm<RegisterFormData>();
 
-    const onSubmit: SubmitHandler<RegisterFromData> = (data) => {
+    const onSubmit: SubmitHandler<RegisterFormData> = useCallback((data) => {
         console.log(data);
         if (data.password1 !== data.password2){
             reset();
@@ -31,7 +31,7 @@ export const Register = () => {
             password1: data.password1,
             password2: data.password2,
         });
-    }
+    }, [])
 
     const navigate = useNavigate();
     const isAuthenticated = useUnit($isAuthenticated);

@@ -15,13 +15,13 @@ type LoginFormData = {
 
 export const Login = () => {
     const {register, handleSubmit, formState: { errors },} = useForm<LoginFormData>();
-    const onSubmit: SubmitHandler<LoginFormData> = (data) => {
+    const onSubmit: SubmitHandler<LoginFormData> = useCallback((data) => {
         console.log(data)
         login({
             login: data.login,
             password: data.password,
         })
-    }
+    }, [])
 
     const navigate = useNavigate();
     const login = useUnit(userLoginFormFilled);

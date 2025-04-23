@@ -4,12 +4,14 @@ import { RequestSender, ResponseBody } from "../types";
 export const getApiRequest: RequestSender = async <T>(
     path?: string,
     params?: string,
-    headers?: HeadersInit,
+    options?: {
+        headers?: HeadersInit,
+    }
 ) => {
     const response = await fetch(
         API_PATH + (path ?? "") + "?" + (params || ""),
         {
-            headers,
+            headers: options?.headers,
         }
     );
 

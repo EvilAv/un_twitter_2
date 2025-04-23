@@ -1,31 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { TPost } from "../../features/posts/types";
-import { getAllPosts } from "../../features/posts/lib";
 import { Post } from "../../components/post";
 
 import styles from "./styles.module.css";
+import { useUnit } from "effector-react";
+import { $posts, postsLoadingStarted } from "../../features/posts/state";
 
 type Props = {
     userId?: number;
-    newPosts?: TPost[];
 };
 
-export const PostList = ({ userId, newPosts= [] }: Props) => {
-    const [posts, setPosts] = useState<TPost[]>([]);
+export const PostList = ({ userId}: Props) => {
+
+    const loadPosts = useUnit(postsLoadingStarted);
+    const posts = useUnit($posts);
 
     useEffect(() => {
-        // with state manager all that shit will gone
-        // emotions will get from another endpoint
-        getAllPosts(userId).then((data) => {
-            setPosts(data);
-        });
-    }, [userId]);
+        loadPosts(userId);
+    }, []);
 
-    const allPosts = [...posts, ...newPosts];
     return (
         <div className={styles.root}>
-            {allPosts.length > 0 ? (
-                allPosts.map((post) => (
+            {posts.length > 0 ? (
+                posts.map((post) => (
                     <Post
                         key={post.id}
                         text={post.text}

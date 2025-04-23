@@ -30,17 +30,9 @@ export const App = () => {
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
-                    {/* {isAuthenticated && data && (
-                        <Route
-                            path="/my-posts"
-                            element={
-                                <MyPosts
-                                    userId={data.id}
-                                    userName={data.nickname}
-                                />
-                            }
-                        />
-                    )} */}
+                    {isAuthenticated && (
+                        <Route path="/my-posts" element={<MyPosts />} />
+                    )}
                 </Routes>
             </BrowserRouter>
         </>

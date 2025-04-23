@@ -2,6 +2,7 @@ import { getDataFromApi } from "../../request"
 import { TPost } from "../types"
 
 export const getAllPosts = async (userId?: number) => {
+    // kind of weird, looks like need to refactor
     let params = ''
     if (userId !== undefined){
         params = new URLSearchParams({
