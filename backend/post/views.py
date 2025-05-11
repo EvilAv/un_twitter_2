@@ -11,6 +11,7 @@ from core import db
 def all_posts():
     user_id = request.args.get('user')
     posts = []
+    # TODO: fix some issues, like it can be no user with such id
     if user_id:
         posts = db.session.execute(db.select(Post).filter_by(user_id=int(user_id))).scalars().all()
         # user = db.session.execute(db.select(User).filter_by(id=int(user_id))).scalar_one_or_none()

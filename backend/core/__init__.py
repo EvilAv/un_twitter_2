@@ -35,8 +35,10 @@ print(f'Test hash: {pass_hash}')
 jwt = JWTManager(app)
 
 from post import post as post_blueprint
-
 app.register_blueprint(post_blueprint)
+
+from recommendation import recommendation as recommendation_blueprint
+app.register_blueprint(recommendation_blueprint)
 
 from emotions import emotions as emo_blueprint
 app.register_blueprint(emo_blueprint)
