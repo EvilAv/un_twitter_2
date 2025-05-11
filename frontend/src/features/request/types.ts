@@ -12,11 +12,16 @@ export type ResponseBody<T> = SuccessResponseBody<T> & Partial<ErrorResponseBody
 
 export type RequestOptions<T> = {
     headers?: HeadersInit,
-    body?: T,
+    body?: T
 }
 
 export type RequestSender = <R, B = {}>(
+    signal: AbortSignal,
     path?: string,
     params?: string,
     options?: RequestOptions<B>,
 ) => Promise<ResponseBody<R>>;
+
+export type UrlParams = Record<string, any> | null;
+
+export type RequestMethod = 'get' | 'post';

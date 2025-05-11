@@ -18,6 +18,7 @@ export const Header = () => {
 
     const onLogoutClick = useCallback(() => {
         logout();
+        navigate('/');
     }, []);
 
     const navigateToMyPosts = useCallback((event: React.MouseEvent) => {

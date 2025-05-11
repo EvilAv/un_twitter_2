@@ -2,6 +2,7 @@ import { API_PATH } from "../const";
 import { RequestSender, ResponseBody } from "../types";
 
 export const postApiRequest: RequestSender = async<R, B> (
+    signal: AbortSignal,
     path?: string,
     params?: string,
     options?: {
@@ -18,6 +19,7 @@ export const postApiRequest: RequestSender = async<R, B> (
                 ...options?.headers,
             },
             body: JSON.stringify(options?.body),
+            signal
         }
     );
 

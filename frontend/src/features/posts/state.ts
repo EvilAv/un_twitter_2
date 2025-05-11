@@ -1,22 +1,24 @@
 import { createEffect, createEvent, createStore, sample } from "effector";
-import { TPost } from "./types";
-import { getAllPosts } from "./lib/get-all-posts";
-import { postDataToApiWithJWT } from "../request";
-import { addNewPost } from "./lib/add-new-post";
+import { AddPostBody, TPost } from "./types";
+import { requestFactory } from "../request";
 
 export const $posts = createStore<TPost[]>([]);
 export const $newPost = createStore<TPost | null>(null);
 
 export const postsLoadingStarted = createEvent<number | undefined>();
 export const newPostAdded = createEvent<string>();
+export const postsLoadingAborted = createEvent();
+
+const getPosts = requestFactory<TPost[]>('get', '/post/all');
+const postNewPost = requestFactory<TPost, AddPostBody>('post', '/post/create');
 
 export const getPostsFx = createEffect(async (userId?: number) => {
-    const data = await getAllPosts(userId);
+    const data = await getPosts.getRequest()({user: userId});
     return data;
 });
 
 export const addNewPostFx = createEffect(async (text: string) => {
-    const data = await addNewPost(text);
+    const data = await postNewPost.getRequest()(null, {text});
     return data;
 })
 
@@ -34,3 +36,7 @@ sample({
     target: addNewPostFx,
 })
 
+sample({
+    clock: postsLoadingAborted,
+    fn: getPosts.abort
+})

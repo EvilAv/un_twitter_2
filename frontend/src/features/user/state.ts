@@ -1,11 +1,11 @@
 import { createEffect, createEvent, createStore, sample } from "effector";
-import { User, UserLoginForm, UserRegisterForm } from "./types";
-import { getDataFromApiWithJWT } from "../request";
-import { loginUserToApi } from "./lib/login-user-to-api";
+import { User, UserLoginForm, UserLoginResponse, UserRegisterForm } from "./types";
+import { requestFactory } from "../request";
 import { $errors } from "../errors/state";
-import { registerUserToApi } from "./lib/register-user-to-api";
 import { showToast } from "../toasts";
 import { removeAuthToken } from "../request/lib/remove-auth-token";
+import { setAuthToken } from "../request/lib/set-auth-token";
+import { DEFAULT_ABORTION_MESSAGE } from "../request/const";
 
 export const $user = createStore<User | null>(null);
 export const $isAuthenticated = $user.map((user) => Boolean(user));
@@ -13,23 +13,31 @@ export const $isAuthenticated = $user.map((user) => Boolean(user));
 export const userCleared = createEvent();
 export const userLoginFormFilled = createEvent<UserLoginForm>();
 export const userRegisterFormFilled = createEvent<UserRegisterForm>();
+export const getUserFxAborted = createEvent();
+
+const getUser = requestFactory<User>('get', '/profile', true);
+const postLoginUser = requestFactory<UserLoginResponse, UserLoginForm>('post', '/login');
+const postRegisterUser = requestFactory<UserLoginResponse, UserRegisterForm>('post', '/register');
 
 export const getUserDataFx = createEffect(async () => {
-    const data = await getDataFromApiWithJWT<User>("/profile");
+    const request = getUser.getRequest()
+    const data = await request();
     return data;
 });
 
 export const loginUserToApiFx = createEffect(async (params: UserLoginForm) => {
-    const user = await loginUserToApi(params);
+    const request = postLoginUser.getRequest()
+    const user = await request(null, params);
+    setAuthToken(user.token);
     return user as User;
 });
 
-export const registerUserToApiFx = createEffect(
-    async (params: UserRegisterForm) => {
-        const user = await registerUserToApi(params);
-        return user as User;
-    }
-);
+export const registerUserToApiFx = createEffect(async (params: UserRegisterForm) => {
+    const request = postRegisterUser.getRequest()
+    const user = await request(null, params);
+    setAuthToken(user.token);
+    return user as User;
+});
 
 export const clearUserTokenFx = createEffect(removeAuthToken);
 
@@ -67,22 +75,26 @@ $user.watch(console.log);
 sample({
     clock: getUserDataFx.failData,
     fn: (error) => error.message,
+    filter: (error) => error.message === DEFAULT_ABORTION_MESSAGE,
     target: $errors,
 });
 
 sample({
     clock: getUserDataFx.failData,
+    filter: (error) => error.message === DEFAULT_ABORTION_MESSAGE,
     target: userCleared,
 });
 
 sample({
     clock: loginUserToApiFx.failData,
+    filter: (error) => error.message === DEFAULT_ABORTION_MESSAGE,
     fn: (error) => error.message,
     target: $errors,
 });
 
 sample({
     clock: registerUserToApiFx.failData,
+    filter: (error) => error.message === DEFAULT_ABORTION_MESSAGE,
     fn: (error) => error.message,
     target: $errors,
 });
@@ -96,3 +108,8 @@ sample({
     clock: registerUserToApiFx.done,
     fn: () => showToast("success", "you successfully logged in"),
 });
+
+sample({
+    clock: getUserFxAborted,
+    fn: getUser.abort
+})

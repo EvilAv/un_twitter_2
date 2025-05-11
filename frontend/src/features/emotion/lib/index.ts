@@ -47,12 +47,12 @@ const getFullEmotion = (name: EmotionName): TEmotion => {
 };
 
 export const getOneEmotion = async (postId: number) => {
-    const params = new URLSearchParams({
-        post: String(postId),
-    }).toString();
-    const emotion = await getDataFromApi<RawEmotion>("/emotion/one", params);
-    if (emotion) {
-        return getFullEmotion(emotion.emotion);
-    }
+    // TODO: fix this, but need store
+    // const emotion = await getDataFromApi<RawEmotion>("/emotion/one", {
+    //     post: postId
+    // });
+    // if (emotion) {
+    //     return getFullEmotion(emotion.emotion);
+    // }
     return null;
 };

@@ -4,21 +4,21 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import { Home } from "../pages/home";
 import { Login } from "../pages/login";
 import { Register } from "../pages/register";
-import { getDataFromApiWithJWT } from "../features/request";
 import { MyPosts } from "../pages/my-posts/index";
 import { useUnit } from "effector-react";
-import { appStarted } from "./state";
+import { appStarted, startRequestsAborted } from "./state";
 import { $isAuthenticated, $user } from "../features/user/state";
 import { ToastContainer } from "react-toastify";
 
 export const App = () => {
     const appStart = useUnit(appStarted);
+    const abortRequests = useUnit(startRequestsAborted);
     const userData = useUnit($user);
     const isAuthenticated = useUnit($isAuthenticated);
 
     useEffect(() => {
-        // looks like we need to abort effect and promise
         appStart();
+        return () => abortRequests();
     }, []);
 
     return (

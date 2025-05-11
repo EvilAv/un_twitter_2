@@ -2,6 +2,7 @@ import { API_PATH } from "../const";
 import { RequestSender, ResponseBody } from "../types";
 
 export const getApiRequest: RequestSender = async <T>(
+    signal: AbortSignal,
     path?: string,
     params?: string,
     options?: {
@@ -12,6 +13,7 @@ export const getApiRequest: RequestSender = async <T>(
         API_PATH + (path ?? "") + "?" + (params || ""),
         {
             headers: options?.headers,
+            signal,
         }
     );
 

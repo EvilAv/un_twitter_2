@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { TPost } from "../../features/posts/types";
 import { Post } from "../../components/post";
 
 import styles from "./styles.module.css";
 import { useUnit } from "effector-react";
-import { $posts, postsLoadingStarted } from "../../features/posts/state";
+import { $posts, postsLoadingAborted, postsLoadingStarted } from "../../features/posts/state";
 
 type Props = {
     userId?: number;
@@ -13,10 +12,13 @@ type Props = {
 export const PostList = ({ userId}: Props) => {
 
     const loadPosts = useUnit(postsLoadingStarted);
+    const abortLoading = useUnit(postsLoadingAborted);
     const posts = useUnit($posts);
 
     useEffect(() => {
+        console.log('render');
         loadPosts(userId);
+        return abortLoading;
     }, []);
 
     return (
