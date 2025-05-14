@@ -10,9 +10,9 @@ from core import db
 
 
 @recommendation.route('/subscriptions')
+@jwt_required()
 def get_subscriptions():
-    # temporary only for tests
-    id = request.args.get('user')
+    id = int(get_jwt_identity())
     user = db.session.execute(db.select(User).filter_by(id=id)).scalar_one_or_none()
     if not user:
         return make_json_error('user not found', 404)
@@ -20,13 +20,12 @@ def get_subscriptions():
         'subscriptions': get_all_subscriptions(user),
     }
 
-@recommendation.route('subscribe')
-def subscribe_user():
-    # temporary only for tests
-    from_user_id = request.args.get('original_user')
-    to_user_id = request.args.get('user')
+@recommendation.route('/subscribe/<to_user_id>')
+@jwt_required()
+def subscribe_user(to_user_id):
+    from_user_id = int(get_jwt_identity())
     user_from = db.session.execute(db.select(User).filter_by(id=from_user_id)).scalar_one_or_none()
-    user_to = db.session.execute(db.select(User).filter_by(id=to_user_id)).scalar_one_or_none()
+    user_to = db.session.execute(db.select(User).filter_by(id=int(to_user_id))).scalar_one_or_none()
 
     if not user_from or not user_to:
         return make_json_error('user not found', 404)
@@ -43,13 +42,12 @@ def subscribe_user():
         'subscriptions': get_all_subscriptions(user_from),
     }
 
-@recommendation.route('unsubscribe')
-def unsubscribe_user():
-    # temporary only for tests
-    from_user_id = request.args.get('original_user')
-    to_user_id = request.args.get('user')
+@recommendation.route('/unsubscribe/<to_user_id>')
+@jwt_required()
+def unsubscribe_user(to_user_id):
+    from_user_id = int(get_jwt_identity())
     user_from = db.session.execute(db.select(User).filter_by(id=from_user_id)).scalar_one_or_none()
-    user_to = db.session.execute(db.select(User).filter_by(id=to_user_id)).scalar_one_or_none()
+    user_to = db.session.execute(db.select(User).filter_by(id=int(to_user_id))).scalar_one_or_none()
 
     if not user_from or not user_to:
         return make_json_error('user not found', 404)
@@ -63,4 +61,19 @@ def unsubscribe_user():
 
     return {
         'subscriptions': get_all_subscriptions(user_from),
+    }
+
+@recommendation.route('/user/<user_id>')
+def get_user(user_id):
+    user = db.session.execute(db.select(User).filter_by(id=int(user_id))).scalar_one_or_none()
+
+    if not user:
+        return make_json_error('user not found', 404)
+    
+    print(user)
+    
+    return {
+        'id': user.id,
+        'nickname': user.nickname,
+        'login': user.login,
     }

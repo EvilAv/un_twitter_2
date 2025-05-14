@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
-import style from './style.module.css'
+import styles from './styles.module.css'
 import { useUnit } from "effector-react";
 import { $isAuthenticated, userRegisterFormFilled } from "../../features/user/state";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -44,9 +44,9 @@ export const Register = () => {
     }, [isAuthenticated])
 
     return (
-        <>
+        <div className={styles.root}>
             <h1>Registration</h1>
-            <form onSubmit={handleSubmit(onSubmit)} className={style.root}>
+            <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
                 <input
                     type="text"
                     placeholder="Login"
@@ -85,6 +85,6 @@ export const Register = () => {
                 <div>{errors.password2?.message}</div>
                 <input type="submit" value="Register" />
             </form>
-        </>
+        </div>
     );
 };

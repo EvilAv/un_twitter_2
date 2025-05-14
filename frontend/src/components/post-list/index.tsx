@@ -16,7 +16,6 @@ export const PostList = ({ userId}: Props) => {
     const posts = useUnit($posts);
 
     useEffect(() => {
-        console.log('render');
         loadPosts(userId);
         return abortLoading;
     }, []);

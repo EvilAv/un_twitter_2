@@ -4,12 +4,11 @@ import { handleServerError } from "./lib/handle-server-error";
 import { postApiRequest } from "./lib/post-api-request";
 import { setAuthToken } from "./lib/set-auth-token";
 import { withJWT } from "./lib/with-jwt";
-import { PureResponseBody, RequestMethod, ResponseBody, UrlParams } from "./types";
+import { PureResponseBody, RequestMethod, RequestProps, ResponseBody, UrlParams } from "./types";
 
 // maybe need to refactor
 export const getDataFromApi = async <T>(signal: AbortSignal, path?: string, params?: UrlParams) => {
     const stringParams = getUrlParams(params);
-    console.log(7, signal)
     const data = await getApiRequest<T>(signal, path, stringParams);
 
     const successData = handleServerError(data);
@@ -69,17 +68,17 @@ export const requestFactory = <R, B = {}>(method: RequestMethod, path?: string, 
         switch (method){
             case 'get': {
                 if (withJWT){
-                    request = (params?: UrlParams) => getDataFromApiWithJWT<R>(controller.signal, path, params);
+                    request = ({pathParams = '', queryParams}: RequestProps<B>) => getDataFromApiWithJWT<R>(controller.signal, `${path}/${pathParams}`, queryParams);
                 } else {
-                    request = (params?: UrlParams) =>  getDataFromApi<R>(controller.signal, path, params);
+                    request = ({pathParams = '', queryParams}: RequestProps<B>) =>  getDataFromApi<R>(controller.signal, `${path}/${pathParams}`, queryParams);
                 };
                 break;
             }
             case "post": {
                 if (withJWT){
-                    request = (params?: UrlParams, body?: B) => postDataToApiWithJWT<R, B>(controller.signal, path, params, body);
+                    request = ({pathParams = '', queryParams, body}: RequestProps<B>) => postDataToApiWithJWT<R, B>(controller.signal, `${path}/${pathParams}`, queryParams, body);
                 } else {
-                    request = (params?: UrlParams, body?: B) => postDataToApi<R, B>(controller.signal, path, params, body);
+                    request = ({pathParams = '', queryParams, body}: RequestProps<B>) => postDataToApi<R, B>(controller.signal, `${path}/${pathParams}`, queryParams, body);
                 };
                 break;
             }

@@ -21,20 +21,21 @@ const postRegisterUser = requestFactory<UserLoginResponse, UserRegisterForm>('po
 
 export const getUserDataFx = createEffect(async () => {
     const request = getUser.getRequest()
-    const data = await request();
+    // need to fix later
+    const data = await request({});
     return data;
 });
 
-export const loginUserToApiFx = createEffect(async (params: UserLoginForm) => {
+export const loginUserToApiFx = createEffect(async (body: UserLoginForm) => {
     const request = postLoginUser.getRequest()
-    const user = await request(null, params);
+    const user = await request({body});
     setAuthToken(user.token);
     return user as User;
 });
 
-export const registerUserToApiFx = createEffect(async (params: UserRegisterForm) => {
+export const registerUserToApiFx = createEffect(async (body: UserRegisterForm) => {
     const request = postRegisterUser.getRequest()
-    const user = await request(null, params);
+    const user = await request({body});
     setAuthToken(user.token);
     return user as User;
 });
@@ -75,19 +76,19 @@ $user.watch(console.log);
 sample({
     clock: getUserDataFx.failData,
     fn: (error) => error.message,
-    filter: (error) => error.message === DEFAULT_ABORTION_MESSAGE,
+    filter: (error) => Boolean(error.message),
     target: $errors,
 });
 
 sample({
     clock: getUserDataFx.failData,
-    filter: (error) => error.message === DEFAULT_ABORTION_MESSAGE,
+    filter: (error) => Boolean(error.message),
     target: userCleared,
 });
 
 sample({
     clock: loginUserToApiFx.failData,
-    filter: (error) => error.message === DEFAULT_ABORTION_MESSAGE,
+    filter: (error) => Boolean(error.message),
     fn: (error) => error.message,
     target: $errors,
 });

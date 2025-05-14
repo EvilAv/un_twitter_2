@@ -1,5 +1,6 @@
 .root {
     display: flex;
+    align-items: center;
     flex-direction: column;
-    gap: 50px;
+    gap: 10px;
 }

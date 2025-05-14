@@ -1,5 +1,6 @@
 import { API_PATH } from "../const";
 import { RequestSender, ResponseBody } from "../types";
+import { formatPath } from "./format=path";
 
 export const postApiRequest: RequestSender = async<R, B> (
     signal: AbortSignal,
@@ -11,7 +12,7 @@ export const postApiRequest: RequestSender = async<R, B> (
     }
 ) => {
     const response = await fetch(
-        API_PATH + (path ?? "") + "?" + (params || ""),
+        API_PATH + formatPath(path) + "?" + (params || ""),
         {
             method: 'POST',
             headers: {

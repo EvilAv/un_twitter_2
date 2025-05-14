@@ -1,0 +1,33 @@
+.item {
+    cursor: pointer;
+    width: 150px;
+    padding: 5px 20px;
+    border-radius: 10px;
+    color: #000;
+    font-weight: bold;
+
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.item:hover {
+    background-color: #bbb;
+}
+
+.item_active {
+    background-color: #cec;
+}
+
+.item_active:hover {
+    background-color: #cec;
+}
+
+.text {
+    line-height: 30px;
+}
+
+.icon {
+    height: 30px;
+    width: 30px;
+}

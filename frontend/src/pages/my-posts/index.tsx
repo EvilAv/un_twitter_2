@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { PostList } from "../../components/post-list";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import styles from "./style.module.css";
+import styles from "./styles.module.css";
 import { emptyStringValidator } from "../../features/forms/validators";
 import { useUnit } from "effector-react";
 import { newPostAdded } from "../../features/posts/state";
@@ -39,7 +39,6 @@ export const MyPosts = () => {
 
     return (
         <>
-            <h1>My posts</h1>
             <PostList userId={user.id} />
             {!isPublishMode && (
                 <button

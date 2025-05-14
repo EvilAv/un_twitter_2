@@ -9,12 +9,19 @@ import { useUnit } from "effector-react";
 import { appStarted, startRequestsAborted } from "./state";
 import { $isAuthenticated, $user } from "../features/user/state";
 import { ToastContainer } from "react-toastify";
+import { Menu } from "../components/menu";
+
+import styles from "./styles.module.css";
+import { Subscriptions } from "../pages/subscriptions";
+import { UserPage } from "../pages/user-page";
 
 export const App = () => {
     const appStart = useUnit(appStarted);
     const abortRequests = useUnit(startRequestsAborted);
     const userData = useUnit($user);
     const isAuthenticated = useUnit($isAuthenticated);
+
+    console.log(isAuthenticated);
 
     useEffect(() => {
         appStart();
@@ -26,14 +33,38 @@ export const App = () => {
             <ToastContainer />
             <BrowserRouter>
                 <Header />
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    {isAuthenticated && (
-                        <Route path="/my-posts" element={<MyPosts />} />
-                    )}
-                </Routes>
+                <div className={styles.root}>
+                    <div className={styles.content}>
+                        <Menu />
+                        <Routes>
+                            {!isAuthenticated ? (
+                                <>
+                                    <Route path="/login" element={<Login />} />
+                                    <Route
+                                        path="/register"
+                                        element={<Register />}
+                                    />
+                                </>
+                            ) : (
+                                <>
+                                    <Route path="/" element={<Home />} />
+                                    <Route
+                                        path="/my-posts"
+                                        element={<MyPosts />}
+                                    />
+                                    <Route
+                                        path="/subscriptions"
+                                        element={<Subscriptions />}
+                                    />
+                                    <Route
+                                        path="/user/:id"
+                                        element={<UserPage />}
+                                    />
+                                </>
+                            )}
+                        </Routes>
+                    </div>
+                </div>
             </BrowserRouter>
         </>
     );

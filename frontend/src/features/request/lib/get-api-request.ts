@@ -1,5 +1,6 @@
 import { API_PATH } from "../const";
 import { RequestSender, ResponseBody } from "../types";
+import { formatPath } from "./format=path";
 
 export const getApiRequest: RequestSender = async <T>(
     signal: AbortSignal,
@@ -10,7 +11,7 @@ export const getApiRequest: RequestSender = async <T>(
     }
 ) => {
     const response = await fetch(
-        API_PATH + (path ?? "") + "?" + (params || ""),
+        API_PATH + formatPath(path) + "?" + (params || ""),
         {
             headers: options?.headers,
             signal,

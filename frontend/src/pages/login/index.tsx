@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useForm, SubmitHandler } from "react-hook-form"
 
-import style from './style.module.css'
+import styles from './styles.module.css'
 import { useUnit } from "effector-react";
 import { $isAuthenticated, userLoginFormFilled } from "../../features/user/state";
 import { emptyStringValidator } from "../../features/forms/validators";
@@ -40,9 +40,9 @@ export const Login = () => {
     }, []);
 
     return (
-        <>
+        <div className={styles.root}>
             <h1>Login</h1>
-            <form onSubmit={handleSubmit(onSubmit)} className={style.root}>
+            <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
                 <input
                     type="text"
                     placeholder="Login"
@@ -65,7 +65,7 @@ export const Login = () => {
                 <div>{errors.password?.message}</div>
                 <input type="submit" value="Log in"/>
             </form>
-            <a href='' onClick={navigateToRegisterPage} className={style.link}>make an account</a>
-        </>
+            <a href='' onClick={navigateToRegisterPage} className={styles.link}>make an account</a>
+        </div>
     );
 };

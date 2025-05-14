@@ -13,12 +13,14 @@ const getPosts = requestFactory<TPost[]>('get', '/post/all');
 const postNewPost = requestFactory<TPost, AddPostBody>('post', '/post/create');
 
 export const getPostsFx = createEffect(async (userId?: number) => {
-    const data = await getPosts.getRequest()({user: userId});
+    const request = getPosts.getRequest();
+    const data = await request({queryParams: {user: userId}});
     return data;
 });
 
 export const addNewPostFx = createEffect(async (text: string) => {
-    const data = await postNewPost.getRequest()(null, {text});
+    const request = postNewPost.getRequest();
+    const data = await request({body: {text}});
     return data;
 })
 
