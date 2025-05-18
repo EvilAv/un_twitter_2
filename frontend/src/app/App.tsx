@@ -14,6 +14,7 @@ import { Menu } from "../components/menu";
 import styles from "./styles.module.css";
 import { Subscriptions } from "../pages/subscriptions";
 import { UserPage } from "../pages/user-page";
+import { NetTest } from "../pages/net-test";
 
 export const App = () => {
     const appStart = useUnit(appStarted);
@@ -44,6 +45,10 @@ export const App = () => {
                                         path="/register"
                                         element={<Register />}
                                     />
+                                    <Route
+                                        path="/net-test"
+                                        element={<NetTest />}
+                                    />
                                 </>
                             ) : (
                                 <>
@@ -59,6 +64,10 @@ export const App = () => {
                                     <Route
                                         path="/user/:id"
                                         element={<UserPage />}
+                                    />
+                                    <Route
+                                        path="/net-test"
+                                        element={<NetTest />}
                                     />
                                 </>
                             )}

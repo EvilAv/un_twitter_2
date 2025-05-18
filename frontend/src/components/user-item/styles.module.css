@@ -1,7 +1,7 @@
 .root {
     display: flex;
     align-items: center;
-    border-radius: 10px;
+    border-radius: 15px;
     gap: 20px;
     border: 1px solid #aaa;
     background-color: #eee;

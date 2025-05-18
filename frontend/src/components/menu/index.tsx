@@ -48,14 +48,14 @@ export const Menu = () => {
         updateActiveId(activePair?.id ?? null);
     }, [pathname]);
 
-    useEffect(() => {
-        if (!isAuthenticated && pathname !== '/login' && pathname !== '/register'){
-            navigate('/login');
-        }
-        if (isAuthenticated && (pathname === '/login' || pathname === '/register')){
-            navigate('/');
-        }
-    }, [pathname, isAuthenticated]);
+    // useEffect(() => {
+    //     if (!isAuthenticated && pathname !== '/login' && pathname !== '/register'){
+    //         navigate('/login');
+    //     }
+    //     if (isAuthenticated && (pathname === '/login' || pathname === '/register')){
+    //         navigate('/');
+    //     }
+    // }, [pathname, isAuthenticated]);
 
     return (
         <div className={styles.root}>

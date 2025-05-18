@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from sqlalchemy import MetaData
+from flask_compress import Compress
 
 from config import Configuration
 
@@ -27,6 +28,11 @@ CORS(app, origins=["http://localhost:8081",])
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app, metadata=metadata)
 migrate = Migrate(app, db, render_as_batch=True)
+
+Compress(app)
+app.config["COMPRESS_REGISTER"] = False
+compress = Compress()
+compress.init_app(app)
 
 test_pass = 'test'
 pass_hash = bcrypt.generate_password_hash(test_pass).decode('utf8')
