@@ -30,6 +30,7 @@ export const PostList = ({ userId}: Props) => {
                         authorId={post.authorId}
                         authorName={post.authorName}
                         id={post.id}
+                        authorLogin={post.authorLogin}
                     />
                 ))
             ) : (

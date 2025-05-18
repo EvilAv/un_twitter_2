@@ -12,6 +12,5 @@ export const getModel = async (type: ModelTypes) => {
         });
         await model.save(getLocalStoragePath(type));
     }
-    console.log(model)
     return model;
 };

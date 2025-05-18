@@ -10,7 +10,7 @@ export const newPostAdded = createEvent<string>();
 export const postsLoadingAborted = createEvent();
 
 const getPosts = requestFactory<TPost[]>('get', '/post/all');
-const postNewPost = requestFactory<TPost, AddPostBody>('post', '/post/create');
+const postNewPost = requestFactory<TPost, AddPostBody>('post', '/post/create', true);
 
 export const getPostsFx = createEffect(async (userId?: number) => {
     const request = getPosts.getRequest();

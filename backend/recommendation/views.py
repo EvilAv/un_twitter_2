@@ -20,7 +20,7 @@ def get_subscriptions():
         'subscriptions': get_all_subscriptions(user),
     }
 
-@recommendation.route('/subscribe/<to_user_id>')
+@recommendation.route('/subscribe/<to_user_id>', methods=['POST'])
 @jwt_required()
 def subscribe_user(to_user_id):
     from_user_id = int(get_jwt_identity())
@@ -42,7 +42,7 @@ def subscribe_user(to_user_id):
         'subscriptions': get_all_subscriptions(user_from),
     }
 
-@recommendation.route('/unsubscribe/<to_user_id>')
+@recommendation.route('/unsubscribe/<to_user_id>', methods=['POST'])
 @jwt_required()
 def unsubscribe_user(to_user_id):
     from_user_id = int(get_jwt_identity())

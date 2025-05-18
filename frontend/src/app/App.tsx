@@ -49,10 +49,10 @@ export const App = () => {
                                         path="/net-test"
                                         element={<NetTest />}
                                     />
+                                    <Route path="*" element={<Login />} />
                                 </>
                             ) : (
                                 <>
-                                    <Route path="/" element={<Home />} />
                                     <Route
                                         path="/my-posts"
                                         element={<MyPosts />}
@@ -69,6 +69,7 @@ export const App = () => {
                                         path="/net-test"
                                         element={<NetTest />}
                                     />
+                                    <Route path="*" element={<Home />} />
                                 </>
                             )}
                         </Routes>

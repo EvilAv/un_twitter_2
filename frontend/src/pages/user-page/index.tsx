@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useParams } from "react-router";
+import React, { useCallback, useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
 
 import UserIcon from "../../icons/user.svg";
 import SubscribeIcon from "../../icons/subscribe.svg";
@@ -11,6 +11,8 @@ import { useUnit } from "effector-react";
 import {
     $subscriptions,
     $userInfo,
+    subscribed,
+    unsubscribed,
     userLoaded,
 } from "../../features/recomendations/state";
 import { $user } from "../../features/user/state";
@@ -27,8 +29,22 @@ export const UserPage = () => {
     const user = useUnit($userInfo);
     const selfUser = useUnit($user);
     const subscriptions = useUnit($subscriptions);
+    const unsubscribe = useUnit(unsubscribed);
+    const subscribe = useUnit(subscribed);
 
     const loadUser = useUnit(userLoaded);
+
+    const navigate = useNavigate();
+
+    const handleUnsubscribeClick = useCallback(() => {
+        unsubscribe(Number(id));
+        navigate("/subscriptions");
+    }, [id]);
+
+    const handleSubscribeClick = useCallback(() => {
+        subscribe(Number(id));
+        navigate("/subscriptions");
+    }, [id]);
 
     useEffect(() => {
         loadUser(Number(id));
@@ -37,7 +53,6 @@ export const UserPage = () => {
     if (!user) {
         return null;
     }
-
     const isSubscribed = isSubscribedTo(subscriptions, user);
 
     return (
@@ -61,6 +76,7 @@ export const UserPage = () => {
                                 src={UnsubscribeIcon}
                                 height={ICON_SIZE}
                                 width={ICON_SIZE}
+                                onClick={handleUnsubscribeClick}
                             />
                         ) : (
                             <img
@@ -68,6 +84,7 @@ export const UserPage = () => {
                                 src={SubscribeIcon}
                                 height={ICON_SIZE}
                                 width={ICON_SIZE}
+                                onClick={handleSubscribeClick}
                             />
                         )}
                     </>
