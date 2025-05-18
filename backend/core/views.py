@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, jwt_required
-from core import app, db, bcrypt, jwt, compress
+from core import app, db, bcrypt, jwt
 from core.errors import make_json_error
-from flask import json, request, send_file
+from flask import json, request
 
 from core.models import User
 
@@ -104,12 +104,3 @@ def get_profile():
         'nickname': user.nickname,
         'id': user.id
     }
-
-@app.route('/model')
-@compress.compressed()
-def get_model():
-    return send_file('./model.json')
-
-@app.route('/binary/<name>')
-def get_binary(name):
-    return send_file(f'./{name}', as_attachment=True)

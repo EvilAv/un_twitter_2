@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import * as tf from "@tensorflow/tfjs";
+import { useUnit } from "effector-react";
+import { $testModel, testModelRequested } from "../../features/nets/state";
 
 type FormData = {
     field1?: number;
@@ -15,39 +17,34 @@ export const NetTest = () => {
         handleSubmit,
         formState: { errors },
     } = useForm<FormData>();
+
+    const loadModel = useUnit(testModelRequested);
+    const model = useUnit($testModel);
+
+    const [answer, setAnswer] = useState("");
     const onSubmit: SubmitHandler<FormData> = useCallback(
         ({ field1 = 0, field2 = 0, field3 = 0, field4 = 0 }) => {
-            // console.log(data);
-            console.log(field1)
             const tensor = tf.tensor2d(
                 [field1, field2, field3, field4],
                 [1, 4]
             );
-            if (model.current){
-                const predictionTensor = model.current.predict(tensor) as tf.Tensor2D;
-                const prediction = predictionTensor.reshape([3, 1]).argMax().arraySync() as number[];
-                if (prediction[0] === 0){
-                    setAnswer('Iris-setosa')
-                } else if (prediction[0] === 1){
-                    setAnswer('Iris-versicolor')
+            if (model) {
+                const predictionTensor = model.predict(tensor) as tf.Tensor2D;
+                const prediction = predictionTensor
+                    .reshape([3, 1])
+                    .argMax()
+                    .arraySync() as number[];
+                if (prediction[0] === 0) {
+                    setAnswer("Iris-setosa");
+                } else if (prediction[0] === 1) {
+                    setAnswer("Iris-versicolor");
                 } else {
-                    setAnswer('Iris-virginica')
+                    setAnswer("Iris-virginica");
                 }
             }
         },
-        []
+        [model]
     );
-
-    const loadModel = useCallback(async () => {
-        const _model = await tf.loadLayersModel("http://localhost:5000/model", {
-            weightPathPrefix: "http://localhost:5000/binary/",
-        });
-        model.current = _model;
-        console.log("message");
-    }, []);
-
-    const model = useRef<tf.LayersModel | null>(null);
-    const [answer, setAnswer] = useState('');
 
     useEffect(() => {
         loadModel();
@@ -64,10 +61,26 @@ export const NetTest = () => {
                     gap: "10px",
                 }}
             >
-                <input type="number" step={0.1} {...register("field1", {valueAsNumber: true})} />
-                <input type="number" step={0.1} {...register("field2", {valueAsNumber: true})} />
-                <input type="number" step={0.1} {...register("field3", {valueAsNumber: true})} />
-                <input type="number" step={0.1} {...register("field4", {valueAsNumber: true})} />
+                <input
+                    type="number"
+                    step={0.1}
+                    {...register("field1", { valueAsNumber: true })}
+                />
+                <input
+                    type="number"
+                    step={0.1}
+                    {...register("field2", { valueAsNumber: true })}
+                />
+                <input
+                    type="number"
+                    step={0.1}
+                    {...register("field3", { valueAsNumber: true })}
+                />
+                <input
+                    type="number"
+                    step={0.1}
+                    {...register("field4", { valueAsNumber: true })}
+                />
                 <input type="submit" value="Predict" />
                 <div style={{ backgroundColor: "yellow" }}>{answer}</div>
             </form>
