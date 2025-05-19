@@ -25,7 +25,7 @@ export type RequestSender = <R, B = {}>(
 
 export type UrlParams = Record<string, any> | null;
 
-export type RequestMethod = "get" | "post";
+export type RequestMethod = "get" | "post" | "delete";
 
 export type RequestProps<T> = {
     pathParams?: string;

@@ -1,4 +1,5 @@
 import { DEFAULT_ABORTION_MESSAGE } from "./const";
+import { deleteApiRequest } from "./lib/delete-api-request";
 import { getApiRequest } from "./lib/get-api-request";
 import { handleServerError } from "./lib/handle-server-error";
 import { postApiRequest } from "./lib/post-api-request";
@@ -18,6 +19,26 @@ export const getDataFromApi = async <T>(signal: AbortSignal, path?: string, para
 export const getDataFromApiWithJWT = async <T>(signal: AbortSignal, path?: string, params?: UrlParams) => {
     const stringParams = getUrlParams(params);
     const data = await withJWT(getApiRequest)<T>(signal, path, stringParams);
+
+    const successData = handleServerError(data);
+    if (successData.token){
+        setAuthToken(successData.token)
+    }
+
+    return successData as PureResponseBody<T>;
+};
+
+export const deleteDataFromApi = async <T>(signal: AbortSignal, path?: string, params?: UrlParams) => {
+    const stringParams = getUrlParams(params);
+    const data = await deleteApiRequest<T>(signal, path, stringParams);
+
+    const successData = handleServerError(data);
+    return successData;
+};
+
+export const deleteDataFromApiWithJWT = async <T>(signal: AbortSignal, path?: string, params?: UrlParams) => {
+    const stringParams = getUrlParams(params);
+    const data = await withJWT(deleteApiRequest)<T>(signal, path, stringParams);
 
     const successData = handleServerError(data);
     if (successData.token){
@@ -71,6 +92,14 @@ export const requestFactory = <R, B = {}>(method: RequestMethod, path?: string, 
                     request = ({pathParams = '', queryParams}: RequestProps<B>) => getDataFromApiWithJWT<R>(controller.signal, `${path}/${pathParams}`, queryParams);
                 } else {
                     request = ({pathParams = '', queryParams}: RequestProps<B>) =>  getDataFromApi<R>(controller.signal, `${path}/${pathParams}`, queryParams);
+                };
+                break;
+            }
+            case 'delete': {
+                if (withJWT){
+                    request = ({pathParams = '', queryParams}: RequestProps<B>) => deleteDataFromApiWithJWT<R>(controller.signal, `${path}/${pathParams}`, queryParams);
+                } else {
+                    request = ({pathParams = '', queryParams}: RequestProps<B>) =>  deleteDataFromApi<R>(controller.signal, `${path}/${pathParams}`, queryParams);
                 };
                 break;
             }

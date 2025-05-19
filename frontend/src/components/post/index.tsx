@@ -1,13 +1,18 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { TPost } from "../../features/posts/types";
 import UserIcon from "../../icons/user.svg";
+import DeleteIcon from "../../icons/delete.svg";
 
 import styles from "./styles.module.css";
 import { TEmotion } from "../../features/emotion/type";
 import { getOneEmotion } from "../../features/emotion/lib";
 import { useNavigate } from "react-router";
+import { useUnit } from "effector-react";
+import { $user } from "../../features/user/state";
+import { postDeleted } from "../../features/posts/state";
 
-const ICON_SIZE = 30;
+const USER_ICON_SIZE = 30;
+const DELETE_ICON_SIZE = 25;
 
 export const Post = ({
     authorName,
@@ -26,14 +31,21 @@ export const Post = ({
         navigate(`/user/${authorId}`);
     }, [authorId]);
 
+    const user = useUnit($user);
+    const _deletePost = useUnit(postDeleted);
+
+    const deletePost = useCallback(() => {
+        _deletePost(id);
+    }, [id, authorId, user])
+
     return (
         <div className={styles.root}>
             <div className={styles.header}>
                 <div className={styles.user}>
                     <img
                         src={UserIcon}
-                        width={ICON_SIZE}
-                        height={ICON_SIZE}
+                        width={USER_ICON_SIZE}
+                        height={USER_ICON_SIZE}
                         className={styles.avatar}
                     />
                     <div>
@@ -43,6 +55,15 @@ export const Post = ({
                         </div>
                     </div>
                 </div>
+                {user?.id === authorId && (
+                        <img
+                            src={DeleteIcon}
+                            width={DELETE_ICON_SIZE}
+                            height={DELETE_ICON_SIZE}
+                            className={styles.delete}
+                            onClick={deletePost}
+                        />
+                    )}
                 {emotion && (
                     <span className={styles.emotion} title={emotion.emotion}>
                         {emotion.emoji}

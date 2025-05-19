@@ -46,3 +46,7 @@
 .link:hover {
     color: #33b;
 }
+
+.delete {
+    cursor: pointer;
+}

@@ -45,3 +45,21 @@ def add_post():
         'authorName': user.nickname,
         'authorId': user.id
     }
+
+@post.route('/delete/<post_id>', methods=['DELETE'])
+@jwt_required()
+def delete_post(post_id):
+    user_id = int(get_jwt_identity())
+    user = db.session.execute(db.select(User).filter_by(id=user_id)).scalar_one_or_none()
+    if not user:
+        return make_json_error('user not found', 404)
+
+    post = db.session.execute(db.select(Post).filter_by(id=int(post_id))).scalar_one_or_none()
+    if not post or post.user_id != user_id:
+        return make_json_error('post not found', 404)
+    
+    db.session.delete(post)
+    db.session.commit()
+
+    return {}
+    
