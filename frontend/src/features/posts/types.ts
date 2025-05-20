@@ -4,6 +4,8 @@ export type TPost = {
     authorName: string;
     authorId: number;
     authorLogin: string;
+    likes?: number;
+    isLiked: boolean;
 }
 
 export type AddPostBody = {

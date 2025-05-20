@@ -31,6 +31,8 @@ export const PostList = ({ userId}: Props) => {
                         authorName={post.authorName}
                         id={post.id}
                         authorLogin={post.authorLogin}
+                        isLiked={post.isLiked}
+                        likes={post.likes}
                     />
                 ))
             ) : (

@@ -4,11 +4,13 @@ from core.errors import make_json_error
 from core.models import User
 from post.models import Post
 from post import post
-from post.serializers import serialize_post
+from post.serializers import serialize_post, serialize_posts
 from core import db
 
 @post.route('/all')
+@jwt_required()
 def all_posts():
+    id = int(get_jwt_identity())
     user_id = request.args.get('user')
     posts = []
     # TODO: fix some issues, like it can be no user with such id
@@ -21,7 +23,10 @@ def all_posts():
         posts = db.session.execute(db.select(Post)).scalars().all()
 
     # TODO: add data field to endpoint responses
-
+    user = db.session.execute(db.select(User).filter_by(id=id)).scalar_one_or_none()
+    if user:
+        return jsonify(serialize_posts(posts, user))
+        
     return jsonify(list(map(serialize_post, posts)))
 
 @post.route('/create', methods=['POST'])

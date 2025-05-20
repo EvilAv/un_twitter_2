@@ -50,3 +50,21 @@
 .delete {
     cursor: pointer;
 }
+
+.btn-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 0px 5px;
+}
+
+.like-section {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.like-btn {
+    cursor: pointer;
+}
