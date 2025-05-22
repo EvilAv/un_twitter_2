@@ -7,9 +7,14 @@ export const getModel = async (type: ModelTypes) => {
     try {
         model = await tf.loadLayersModel(getLocalStoragePath(type));
     } catch (e) {
-        model = await tf.loadLayersModel(`${JSON_API_PATH}/${type}`, {
-            weightPathPrefix: `${BINARY_API_PATH}/${type}/`,
-        });
+        try {
+            model = await tf.loadLayersModel(`${JSON_API_PATH}/${type}`, {
+                weightPathPrefix: `${BINARY_API_PATH}/${type}/`,
+            });
+        } catch (e){
+            console.log('error loading model from backend', type, e)
+            return null
+        }
         await model.save(getLocalStoragePath(type));
     }
     return model;

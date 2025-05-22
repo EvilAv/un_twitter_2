@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import * as tf from "@tensorflow/tfjs";
 import { useUnit } from "effector-react";
-import { $testModel, testModelRequested } from "../../features/nets/state";
+import { $testModel, $testWord2vecModel, testModelRequested, testWord2vecModelRequested } from "../../features/nets/state";
 
 type FormData = {
     field1?: number;
@@ -20,6 +20,22 @@ export const NetTest = () => {
 
     const loadModel = useUnit(testModelRequested);
     const model = useUnit($testModel);
+
+    const loadModel2 = useUnit(testWord2vecModelRequested);
+    const model2 = useUnit($testWord2vecModel);
+
+    console.log(model2)
+
+    useEffect(() => {
+        if (model2){
+            const vocab = JSON.parse('{"say": 0, "woof": 1, "dog": 2, "meow": 3, "cat": 4}')
+
+            const tensor = tf.tensor1d([vocab['dog']]);
+            const result = model2.predict(tensor) as tf.Tensor3D;
+            const arr = result.arraySync() as number[][][]
+            console.log(arr[0][0])
+        }
+    }, [model2])
 
     const [answer, setAnswer] = useState("");
     const onSubmit: SubmitHandler<FormData> = useCallback(
@@ -48,6 +64,7 @@ export const NetTest = () => {
 
     useEffect(() => {
         loadModel();
+        loadModel2();
     }, []);
 
     return (

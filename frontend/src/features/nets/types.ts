@@ -1,1 +1,1 @@
-export type ModelTypes = 'test';
+export type ModelTypes = 'test' | 'test-word2vec';

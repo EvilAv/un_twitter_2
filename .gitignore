@@ -9,3 +9,4 @@ backend/base.db
 node_modules
 todo.todo
 *.hint
+diploma-notes.md
