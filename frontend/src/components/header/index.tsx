@@ -4,7 +4,11 @@ import styles from "./styles.module.css";
 import { useNavigate } from "react-router";
 import { Logo } from "../logo";
 import { useUnit } from "effector-react";
-import { $isAuthenticated, $user, userCleared } from "../../features/user/state";
+import {
+    $isAuthenticated,
+    $user,
+    userCleared,
+} from "../../features/user/state";
 
 export const Header = () => {
     const navigate = useNavigate();
@@ -18,7 +22,7 @@ export const Header = () => {
 
     const onLogoutClick = useCallback(() => {
         logout();
-        navigate('/');
+        navigate("/");
     }, []);
 
     const navigateToMyPosts = useCallback((event: React.MouseEvent) => {
@@ -28,9 +32,10 @@ export const Header = () => {
 
     return (
         <header className={styles.root}>
-            <Logo />
-            {isAuthenticated && <div>{userData?.nickname}</div>}
-            {isAuthenticated && <a href="" onClick={navigateToMyPosts}>my posts</a>}
+            <div className={styles.user}>
+                <Logo />
+                {isAuthenticated && <div>{userData?.nickname}</div>}
+            </div>
             {isAuthenticated ? (
                 <button onClick={onLogoutClick}>logout</button>
             ) : (

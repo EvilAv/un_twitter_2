@@ -2,4 +2,6 @@ body {
     background-color: #ccc;
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-size: 16px;
+    margin: 0px;
+    padding: 0px;
 }
