@@ -20,6 +20,7 @@ import { $user } from "../../features/user/state";
 const AVATAR_SIZE = 100;
 const ICON_SIZE = 50;
 
+// need to find out on backend
 const isSubscribedTo = (subscribes: User[], user: User) => {
     return subscribes.some(({ id }) => id === user.id);
 };

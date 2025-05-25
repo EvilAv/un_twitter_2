@@ -86,7 +86,8 @@ $posts
 
             return [...state.slice(0, idx), a, ...state.slice(idx + 1)];
         }
-    });
+    })
+    .on(postsLoadingStarted, () => []);
 
 sample({
     clock: postDeleted,

@@ -47,31 +47,6 @@ export const loginUserToApiFx = createEffect(async (body: UserLoginForm) => {
     const user = await request({ body });
     const { privateKey } = generateKeys(body.password);
     setAuthToken(user.token);
-    // let key128Bits = CryptoJS.PBKDF2("Secret Passphrase", "0", {
-    //     keySize: 128 / 32,
-    // }).toString();
-    // console.log(key128Bits);
-    // const b = util.decodeUTF8(key128Bits);
-    // // const enc = new TextEncoder()
-    // // const a = enc.encode('456')
-    // const { publicKey, secretKey } = nacl.box.keyPair.fromSecretKey(b);
-    // const newUser = nacl.box.keyPair();
-    // const nonce = nacl.randomBytes(nacl.box.nonceLength);
-    // console.log(util.encodeBase64(publicKey));
-    // const msg1 = nacl.box(
-    //     util.decodeUTF8("hello there :3"),
-    //     nonce,
-    //     newUser.publicKey,
-    //     secretKey
-    // );
-
-    // const decryptedMessage = nacl.box.open(
-    //     msg1,
-    //     nonce,
-    //     publicKey,
-    //     newUser.secretKey
-    // );
-    // console.log(util.encodeUTF8(decryptedMessage!));
     return { ...user, private_key: privateKey } as User;
 });
 

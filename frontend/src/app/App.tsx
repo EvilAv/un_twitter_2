@@ -15,6 +15,8 @@ import styles from "./styles.module.css";
 import { Subscriptions } from "../pages/subscriptions";
 import { UserPage } from "../pages/user-page";
 import { NetTest } from "../pages/net-test";
+import { Chats } from "../pages/chats";
+import { Chat } from "../pages/chat";
 
 export const App = () => {
     const appStart = useUnit(appStarted);
@@ -68,6 +70,11 @@ export const App = () => {
                                     <Route
                                         path="/net-test"
                                         element={<NetTest />}
+                                    />
+                                    <Route path="/chats" element={<Chats />} />
+                                    <Route
+                                        path="/chat/:id"
+                                        element={<Chat />}
                                     />
                                     <Route path="*" element={<Home />} />
                                 </>

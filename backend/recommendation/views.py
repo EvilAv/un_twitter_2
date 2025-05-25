@@ -74,6 +74,7 @@ def get_user(user_id):
         'id': user.id,
         'nickname': user.nickname,
         'login': user.login,
+        'public_key': user.public_key
     }
 
 @recommendation.route('/like/<_post_id>', methods=['POST'])

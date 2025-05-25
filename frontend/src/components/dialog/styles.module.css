@@ -1,0 +1,35 @@
+.root {
+    display: flex;
+    align-items: center;
+    border-radius: 15px;
+    gap: 30px;
+    border: 1px solid #aaa;
+    background-color: #eee;
+    width: 450px;
+    padding: 15px;
+    cursor: pointer;
+}
+
+.root:hover {
+    background-color: #ddd;
+    border-color: #999;
+}
+
+.avatar {
+    border-radius: 50%;
+    background-color: #aca;
+    padding: 5px;
+}
+
+.avatar:hover {
+    background-color: #7a7;
+}
+
+.nickname {
+    font-weight: bold;
+    margin-bottom: 5px;    
+}
+
+.link {
+    color: #66c;
+}
