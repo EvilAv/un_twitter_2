@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@tensorflow/tfjs": "^4.22.0",
+    "crypto-js": "^4.2.0",
     "effector": "^23.3.0",
     "effector-react": "^23.3.0",
     "react": "^19.0.0",
@@ -9,6 +10,8 @@
     "react-router": "^7.1.1",
     "react-toastify": "^11.0.3",
     "snowpack": "^3.8.8",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1",
     "typescript": "^5.7.3"
   },
   "name": "un_twitter_2",
@@ -16,6 +19,7 @@
   "main": "snowpack.config.js",
   "devDependencies": {
     "@snowpack/plugin-typescript": "^1.2.1",
+    "@types/crypto-js": "^4.2.2",
     "@types/react": "^19.0.4"
   },
   "scripts": {

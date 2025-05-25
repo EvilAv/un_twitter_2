@@ -70,8 +70,6 @@ def get_user(user_id):
     if not user:
         return make_json_error('user not found', 404)
     
-    print(user)
-    
     return {
         'id': user.id,
         'nickname': user.nickname,

@@ -1,9 +1,14 @@
-export type User = {
+export type BackendUser = {
     nickname: string,
     id: number,
+    public_key: string,
 }
 
-export type UserLoginResponse = User & {
+export type User = BackendUser & {
+    private_key: string
+}
+
+export type UserLoginResponse = BackendUser & {
     token: string;
 }
 
@@ -17,4 +22,8 @@ export type UserRegisterForm = {
     nickname: string;
     password1: string;
     password2: string;
+}
+
+export type UserRegisterRequest = UserRegisterForm & {
+    public_key: string;
 }

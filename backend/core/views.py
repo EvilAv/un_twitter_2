@@ -54,7 +54,8 @@ def create_token():
         return {
             'token': token,
             'nickname': user.nickname,
-            'id': user.id
+            'id': user.id,
+            'public_key': user.public_key,
         }
     return make_json_error('wrong password', 401)
 
@@ -79,8 +80,12 @@ def register_new_user():
     if password1 != password2:
         return make_json_error('passwords are not equal', 400)
 
+    public_key = request.json.get('public_key', None)
+    if not public_key:
+        return make_json_error('no public key', 400)
+
     password_hash = bcrypt.generate_password_hash(password1).decode('utf8')
-    new_user = User(login=login, nickname=nickname, password_hash=password_hash)
+    new_user = User(login=login, nickname=nickname, password_hash=password_hash, public_key=public_key)
 
     db.session.add(new_user)
     db.session.commit()
@@ -89,7 +94,8 @@ def register_new_user():
     return {
         'token': token,
         'nickname': new_user.nickname,
-        'id': new_user.id
+        'id': new_user.id,
+        'public_key': new_user.public_key,
     }
 
 @app.route('/profile')
@@ -102,5 +108,6 @@ def get_profile():
 
     return {
         'nickname': user.nickname,
-        'id': user.id
+        'id': user.id,
+        'public_key': user.public_key,
     }
