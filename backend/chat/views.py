@@ -1,13 +1,17 @@
-from flask import jsonify
+from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from chat.serializers import serialize_message
 from core.errors import make_json_error
 from core.models import User
 from chat import chat
 from chat.models import Dialog, Message
-from core import db
+from chat.serializers import serialize_date, serialize_message
+from core import db, socketio
+from flask_socketio import join_room, leave_room
+import datetime
 
 BATCH_SIZE = 20
+
+rooms = {}
 
 @chat.route('/dialogues')
 @jwt_required()
@@ -49,5 +53,50 @@ def get_messages(_dialog_id, _offset):
     # if there is no messages just return an empty array
     messages = db.session.execute(db.select(Message).filter_by(dialog_id=dialog_id).order_by(Message.date.desc())).scalars().all()[offset:offset + BATCH_SIZE]
     print(messages)
-
     return jsonify(list(map(serialize_message, messages)))
+
+# @socketio.on('connect')
+# @jwt_required()
+# def handle_connect():
+#     # socketio.emit('error', 'unauthorized')        
+#     print('it works')
+
+@socketio.on('join')
+@jwt_required()
+def handle_join(dialog_id):
+    join_room(dialog_id)
+    rooms[request.sid] = dialog_id
+    dialog = db.session.execute(db.select(Dialog).filter_by(id=int(dialog_id))).scalar_one_or_none()
+    if not dialog:
+        socketio.emit('error', 'no dialog', to=dialog_id)
+    socketio.emit('msg', to=dialog_id)
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    room = rooms[request.sid]
+    leave_room(room)
+    rooms.pop(request.sid)
+
+@socketio.on('send-message')
+@jwt_required()
+def handle_send_message(message):
+    id = int(get_jwt_identity())
+    room = rooms[request.sid]
+    date = datetime.datetime.now(datetime.timezone.utc)
+
+    new_msg = Message (
+        text=message['text'],
+        mine_text=message['mineText'],
+        nonce=message['nonce'],
+        user_id=id,
+        date=date,
+        dialog_id=int(room)
+    )
+
+    db.session.add(new_msg)
+    db.session.commit()
+
+    print(serialize_message(new_msg))
+    socketio.emit('receive-message', serialize_message(new_msg), to=room)
+    print(rooms)
+    

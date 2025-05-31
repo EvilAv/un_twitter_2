@@ -21,3 +21,8 @@ export type Message = {
     authorId: number;
     date: string;
 }
+
+export type RawMessage = Message & {
+    nonce: string;
+    mineText: string;
+}

@@ -7,6 +7,7 @@ from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from sqlalchemy import MetaData
 from flask_compress import Compress
+from flask_socketio import SocketIO
 
 from config import Configuration
 
@@ -33,6 +34,9 @@ Compress(app)
 app.config["COMPRESS_REGISTER"] = False
 compress = Compress()
 compress.init_app(app)
+
+socketio = SocketIO(app, cors_allowed_origins=["http://localhost:8081",])
+socketio.init_app(app)
 
 test_pass = 'test'
 pass_hash = bcrypt.generate_password_hash(test_pass).decode('utf8')

@@ -17,11 +17,10 @@ export const MessageList = ({ observerRef, messages }: Props) => {
     const endRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        console.log(endRef);
         if (endRef.current) {
             endRef.current.scrollIntoView(false);
         }
-    }, [endRef.current]);
+    }, [endRef.current, messages]);
 
 
     const user = useUnit($user);

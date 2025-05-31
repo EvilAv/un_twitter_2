@@ -11,7 +11,7 @@ type Params = {
 export const decryptMessage = ({text, private_key, public_key, nonce}: Params) => {
 
     const msg = nacl.box.open(
-        util.decodeUTF8(text),
+        util.decodeBase64(text),
         util.decodeBase64(nonce),
         util.decodeBase64(public_key),
         util.decodeBase64(private_key)

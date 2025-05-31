@@ -1,12 +1,21 @@
 import { createEffect, createEvent, createStore, sample } from "effector";
-import { Dialog, DialoguesResponse, Message, UserWithKey } from "./types";
+import {
+    Dialog,
+    DialoguesResponse,
+    Message,
+    RawMessage,
+    UserWithKey,
+} from "./types";
 import { requestFactory } from "../request";
 import { BATCH_SIZE } from "./const";
+import { $user } from "../user/state";
+import { decryptRawMessage } from "./libs/decrypt-raw-message";
+import { User } from "../user/types";
 
 export const $dialogues = createStore<Dialog[]>([]);
 export const $selectedDialog = createStore<Dialog | null>(null);
 export const $companion = createStore<UserWithKey | null>(null);
-export const $pureMessages = createStore<Message[]>([]);
+export const $messages = createStore<Message[]>([]);
 
 export const dialoguesLoaded = createEvent();
 export const dialogSelected = createEvent<number>();
@@ -14,8 +23,10 @@ export const dialogClosed = createEvent();
 export const getDialoguesAborted = createEvent();
 export const getMessagesAborted = createEvent();
 export const messagesLoaded = createEvent<number>();
+export const oneMessageLoaded = createEvent<RawMessage>();
 
-export const $reversedMessages = $pureMessages.map(state => state.reverse());
+export const onePureMessageLoaded = createEvent<Message>();
+export const pureMessagesLoaded = createEvent<Message[]>();
 
 const getDialogues = requestFactory<DialoguesResponse>(
     "get",
@@ -27,7 +38,7 @@ const getUser = requestFactory<UserWithKey>(
     "/recommendation/user",
     true
 );
-const getMessages = requestFactory<Message[]>("get", "/chat/messages", true);
+const getMessages = requestFactory<RawMessage[]>("get", "/chat/messages", true);
 
 export const getDialoguesFx = createEffect(async () => {
     const request = getDialogues.getRequest();
@@ -41,8 +52,6 @@ export const getUserFx = createEffect(async (id: number) => {
     return data;
 });
 
-// will reverse array here, we will got array from back, where first item
-// is the newest, and then we will reverse array here, needs derived store i guess
 export const getMessagesFx = createEffect(
     async ([dialogId, offset]: [number, number]) => {
         const request = getMessages.getRequest();
@@ -51,14 +60,33 @@ export const getMessagesFx = createEffect(
     }
 );
 
-$pureMessages
-    .on(getMessagesFx.doneData, (state, newMessages) => [
-        ...state,
+$messages
+    .on(pureMessagesLoaded, (state, newMessages) => [
         ...newMessages,
+        ...state,
     ])
-    .on(dialogClosed, () => []);
+    .on(dialogClosed, () => [])
+    .on(onePureMessageLoaded, (state, message) => [...state, message]);
 
-$pureMessages.watch(console.log);
+// hell part, but we just take users from stores and do some decryption
+// and then trigger event to update store with decrypted (pure) messages
+sample({
+    clock: getMessagesFx.doneData,
+    source: [$user, $companion],
+    filter: ([user, user2]) => Boolean(user && user2),
+    fn: ([user1, user2], messages) =>
+        messages.map(msg => decryptRawMessage(user1 as User, user2 as UserWithKey, msg)).reverse(),
+    target: pureMessagesLoaded
+});
+
+sample({
+    clock: oneMessageLoaded,
+    source: [$user, $companion],
+    filter: ([user, user2], message) => Boolean(user && user2 && message),
+    fn: ([user1, user2], message) =>
+        decryptRawMessage(user1 as User, user2 as UserWithKey, message),
+    target: onePureMessageLoaded
+});
 
 sample({
     clock: getDialoguesAborted,

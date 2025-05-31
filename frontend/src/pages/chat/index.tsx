@@ -1,13 +1,15 @@
 import { useUnit } from "effector-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import {
     $companion,
-    $reversedMessages,
+    $messages,
+    $selectedDialog,
     dialogClosed,
     dialogSelected,
     getMessagesAborted,
     messagesLoaded,
+    oneMessageLoaded,
 } from "../../features/chat/state";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { emptyStringValidator } from "../../features/forms/validators";
@@ -17,6 +19,9 @@ import SendIcon from "../../icons/send.svg";
 import { encryptMessage } from "../../features/chat/libs/ecnrypt-message";
 import { useInView } from "react-intersection-observer";
 import { MessageList } from "../../components/message-list";
+import { getSocket } from "../../features/chat/socket";
+import { Socket } from "socket.io-client";
+import { handleError } from "./handlers";
 
 const ICON_SIZE = 25;
 
@@ -34,19 +39,33 @@ export const Chat = () => {
 
     const companion = useUnit($companion);
     const user = useUnit($user);
-    const messages = useUnit($reversedMessages);
+    const messages = useUnit($messages);
+    const dialog = useUnit($selectedDialog);
+
+    const addMessage = useUnit(oneMessageLoaded);
 
     const [pageIdx, setPageIdx] = useState(1);
+    const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
         selectDialog(Number(id));
-        loadMessages(0)
+        loadMessages(0);
+
+        if (socket && dialog) {
+            socket.connect();
+            socket.emit("join", dialog.id);
+        } else {
+            setSocket(getSocket());
+        }
 
         return () => {
             closeDialog();
             abortMessages();
+            if (socket) {
+                socket.disconnect();
+            }
         };
-    }, [id, selectDialog, closeDialog, loadMessages]);
+    }, [id, selectDialog, closeDialog, loadMessages, socket, dialog]);
 
     const {
         register,
@@ -57,17 +76,19 @@ export const Chat = () => {
 
     const onSubmit: SubmitHandler<MessageFormData> = useCallback(
         (rawData) => {
-            if (user && companion) {
-                const msg = encryptMessage({
+            if (user && companion && socket) {
+                const msg = {...encryptMessage({
                     text: rawData.text,
                     private_key: user.private_key,
                     public_key: companion.public_key,
-                });
+                    mine_public_key: user.public_key
+                }), authorId:user.id } ;
                 console.log(msg);
+                socket.emit('send-message', msg)
             }
             reset();
         },
-        [user, companion]
+        [user, companion, socket]
     );
 
     const { ref, inView } = useInView();
@@ -79,8 +100,24 @@ export const Chat = () => {
         }
     }, [inView, setPageIdx]);
 
+    useEffect(() => {
+        if (socket) {
+            socket.on("error", handleError);
+            socket.on('receive-message', addMessage)
+        }
+
+        return () => {
+            socket?.off('error', handleError)
+            socket?.off('receive-message', addMessage)
+        }
+    }, [socket]);
+
     if (!user || !companion) {
         return null;
+    }
+
+    if (!socket) {
+        return <p>:( Chat is unavailable</p>;
     }
 
     return (

@@ -10,7 +10,6 @@ type Props = {
 };
 
 export const MessageItem = ({ isMine, ref, text, date }: Props) => {
-    console.log(isMine)
     return (
         <div className={styles.root} ref={ref}>
             <div
