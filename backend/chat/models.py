@@ -26,4 +26,4 @@ class Message(db.Model):
     dialog = relationship('Dialog', backref='messages', foreign_keys=[dialog_id])
 
     def __repr__(self):
-        return f'Message #{self.id} from ${self.user} in dialog #${self.dialog_id}'
+        return f'Message #{self.id} from {self.user} in dialog #{self.dialog_id}'

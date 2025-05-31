@@ -1,0 +1,44 @@
+.root {
+    width: 100%;
+
+    padding: 5px 20px;
+    box-sizing: border-box;
+}
+
+.mine-container {
+    display: flex;
+    justify-content: end;
+}
+
+.opposite-container {
+    display: flex;
+    justify-content: start;
+}
+
+.mine {
+    background-color: #aca;
+}
+
+.opposite {
+    background-color: #555;
+    color: #eee
+}
+
+.message-container {
+    padding: 5px 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+}
+
+.text {
+    font-weight: bold;
+    max-width: 250px;
+}
+
+.date {
+    font-size: 12px;
+    align-self: flex-end;
+}

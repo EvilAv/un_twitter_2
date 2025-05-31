@@ -15,3 +15,9 @@ export type UserWithKey = {
     login: string,
     public_key: string,
 }
+
+export type Message = {
+    text: string;
+    authorId: number;
+    date: string;
+}
