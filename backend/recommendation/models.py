@@ -17,8 +17,5 @@ class Like(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
 
-    author = relationship('User', backref='liked', foreign_keys=[user_id])
-    liked_post = relationship('Post', backref='liked', foreign_keys=[post_id])
-
     def __repr__(self):
         return f'Like #{self.id} to post [{self.liked_post}] by {self.author}'

@@ -1,30 +1,62 @@
 import React, { useEffect, useState } from "react";
-import { Post } from "../../components/post";
+import { PostItem } from "../../components/post-item";
 
 import styles from "./styles.module.css";
 import { useUnit } from "effector-react";
-import { $posts, postsLoadingAborted, postsLoadingStarted } from "../../features/posts/state";
+import {
+    $posts,
+    postListCleared,
+    postsLoadingAborted,
+    postsLoadingStarted,
+} from "../../features/posts/state";
+import { useInView } from "react-intersection-observer";
 
 type Props = {
     userId?: number;
 };
 
-export const PostList = ({ userId}: Props) => {
+const needRef = (idx: number, maxPosts: number) => {
+    if (maxPosts < 5) {
+        return false;
+    }
+    return idx === maxPosts - 2;
+};
+
+export const PostList = ({ userId }: Props) => {
+    const { ref, inView } = useInView();
+    const [pageIdx, setPageIdx] = useState(1);
 
     const loadPosts = useUnit(postsLoadingStarted);
     const abortLoading = useUnit(postsLoadingAborted);
+    const clearPosts = useUnit(postListCleared);
     const posts = useUnit($posts);
 
     useEffect(() => {
-        loadPosts(userId);
-        return abortLoading;
-    }, []);
+        loadPosts({ userId, offset: 0 });
+
+        return () => {
+            abortLoading();
+            clearPosts();
+        };
+    }, [userId]);
+
+    useEffect(() => {
+        if (inView) {
+            loadPosts({ userId, offset: pageIdx });
+            setPageIdx(pageIdx + 1);
+        }
+
+        return () => {
+            abortLoading();
+            clearPosts();
+        };
+    }, [inView, setPageIdx, userId]);
 
     return (
         <div className={styles.root}>
             {posts.length > 0 ? (
-                posts.map((post) => (
-                    <Post
+                posts.map((post, idx) => (
+                    <PostItem
                         key={post.id}
                         text={post.text}
                         authorId={post.authorId}
@@ -33,6 +65,8 @@ export const PostList = ({ userId}: Props) => {
                         authorLogin={post.authorLogin}
                         isLiked={post.isLiked}
                         likes={post.likes}
+                        emotion={post.emotion}
+                        ref={needRef(idx, posts.length) ? ref : undefined}
                     />
                 ))
             ) : (

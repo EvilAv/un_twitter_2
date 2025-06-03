@@ -1,3 +1,5 @@
+import { Emotion } from "../emotion/type";
+
 export type TPost = {
     text: string;
     id: number;
@@ -6,6 +8,7 @@ export type TPost = {
     authorLogin: string;
     likes?: number;
     isLiked: boolean;
+    emotion: Emotion;
 }
 
 export type AddPostBody = {

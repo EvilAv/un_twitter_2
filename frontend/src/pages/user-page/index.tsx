@@ -16,6 +16,7 @@ import {
     userLoaded,
 } from "../../features/recomendations/state";
 import { $user } from "../../features/user/state";
+import { PostList } from "../../components/post-list";
 
 const AVATAR_SIZE = 100;
 const ICON_SIZE = 50;
@@ -91,12 +92,11 @@ export const UserPage = () => {
                     </>
                 )}
             </div>
-            <div>
-                <div>
-                    <b>Posts:</b>
-                </div>
-                <div>456</div>
+            <div className={styles["post-title"]}>
+                <b>Posts:</b>
             </div>
+
+            <PostList userId={user.id} />
         </div>
     );
 };

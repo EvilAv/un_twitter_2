@@ -6,6 +6,7 @@ def serialize_post(raw_post, is_liked):
         'authorId': raw_post.user_id, 
         'authorLogin': raw_post.author.login,
         'likes': raw_post.likes,
+        'emotion': raw_post.emotion.value,
         'isLiked': is_liked,
     }
 

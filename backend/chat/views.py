@@ -96,7 +96,6 @@ def handle_send_message(message):
     db.session.add(new_msg)
     db.session.commit()
 
-    print(serialize_message(new_msg))
     socketio.emit('receive-message', serialize_message(new_msg), to=room)
     print(rooms)
     

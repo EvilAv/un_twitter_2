@@ -1,23 +1,32 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import { TPost } from "../../features/posts/types";
 import UserIcon from "../../icons/user.svg";
 import DeleteIcon from "../../icons/delete.svg";
 import LikeIcon from "../../icons/like.svg";
 import LikePressedIcon from "../../icons/like-pressed.svg";
+import EmoIcon from "../../icons/no-mouth.svg";
 
 import styles from "./styles.module.css";
-import { TEmotion } from "../../features/emotion/type";
-import { getOneEmotion } from "../../features/emotion/lib";
 import { useNavigate } from "react-router";
 import { useUnit } from "effector-react";
 import { $user } from "../../features/user/state";
-import { postDeleted, postLiked, postUnliked } from "../../features/posts/state";
+import {
+    postDeleted,
+    postLiked,
+    postUnliked,
+} from "../../features/posts/state";
+import { getEmotionIcon, getEmotionText } from "../../features/emotion";
 
 const USER_ICON_SIZE = 30;
 const DELETE_ICON_SIZE = 25;
 const LIKE_ICON_SIZE = 25;
+const EMO_ICON_SIZE = 22;
 
-export const Post = ({
+type Props = TPost & {
+    ref?: (node?: Element | null) => void;
+}
+
+export const PostItem = ({
     authorName,
     text,
     id,
@@ -25,11 +34,9 @@ export const Post = ({
     authorId,
     likes = 0,
     isLiked,
-}: TPost) => {
-    const [emotion, setEmotion] = useState<TEmotion | null>(null);
-    useEffect(() => {
-        getOneEmotion(id).then((emo) => setEmotion(emo));
-    }, [setEmotion]);
+    emotion,
+    ref
+}: Props) => {
     const navigate = useNavigate();
 
     const handleUserClick = useCallback(() => {
@@ -49,13 +56,12 @@ export const Post = ({
         _likePost(id);
     }, [id, authorId, user]);
 
-    
     const unlikePost = useCallback(() => {
         _unlikePost(id);
     }, [id, authorId, user]);
 
     return (
-        <div className={styles.root}>
+        <div className={styles.root} ref={ref}>
             <div className={styles.header}>
                 <div className={styles.user}>
                     <img
@@ -63,6 +69,7 @@ export const Post = ({
                         width={USER_ICON_SIZE}
                         height={USER_ICON_SIZE}
                         className={styles.avatar}
+                        onClick={handleUserClick}
                     />
                     <div>
                         <div>{authorName}</div>
@@ -79,11 +86,6 @@ export const Post = ({
                         className={styles.delete}
                         onClick={deletePost}
                     />
-                )}
-                {emotion && (
-                    <span className={styles.emotion} title={emotion.emotion}>
-                        {emotion.emoji}
-                    </span>
                 )}
             </div>
             <hr />
@@ -108,6 +110,19 @@ export const Post = ({
                         />
                     )}
                     {likes > 0 && <div>{likes}</div>}
+                </div>
+                <div className={styles.emotion}>
+                    <img
+                        src={EmoIcon}
+                        width={EMO_ICON_SIZE}
+                        height={EMO_ICON_SIZE}
+                    />
+                    <div
+                        title={getEmotionText(emotion)}
+                        className={styles["emotion-icon"]}
+                    >
+                        {getEmotionIcon(emotion)}
+                    </div>
                 </div>
             </div>
         </div>

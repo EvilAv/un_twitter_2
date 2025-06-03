@@ -9,7 +9,6 @@ export const decryptRawMessage = (
 ): Message => {
     let text;
     if (message.authorId === user1.id) {
-        console.log(user1, user2, message)
         const temp = decryptMessage({
             text: message.mineText,
             nonce: message.nonce,

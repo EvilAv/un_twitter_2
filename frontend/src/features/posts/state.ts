@@ -6,14 +6,17 @@ import { showToast } from "../toasts";
 export const $posts = createStore<TPost[]>([]);
 export const $newPost = createStore<TPost | null>(null);
 
-export const postsLoadingStarted = createEvent<number | undefined>();
+export const postsLoadingStarted = createEvent<GetPostsFxParams>();
+export const postListCleared = createEvent();
 export const newPostAdded = createEvent<string>();
 export const postDeleted = createEvent<number>();
 export const postLiked = createEvent<number>();
 export const postUnliked = createEvent<number>();
 export const postsLoadingAborted = createEvent();
 
-const getPosts = requestFactory<TPost[]>("get", "/post/all", true);
+const BATCH_SIZE = 6;
+
+const getPosts = requestFactory<TPost[]>("get", "/post/posts", true);
 const postNewPost = requestFactory<TPost, AddPostBody>(
     "post",
     "/post/create",
@@ -21,13 +24,27 @@ const postNewPost = requestFactory<TPost, AddPostBody>(
 );
 const deletePost = requestFactory<{}>("delete", "/post/delete", true);
 const postLikePost = requestFactory<{}>("post", "/recommendation/like", true);
-const postUnlikePost = requestFactory<{}>("post", "/recommendation/unlike", true);
+const postUnlikePost = requestFactory<{}>(
+    "post",
+    "/recommendation/unlike",
+    true
+);
 
-export const getPostsFx = createEffect(async (userId?: number) => {
-    const request = getPosts.getRequest();
-    const data = await request({ queryParams: { user: userId } });
-    return data;
-});
+type GetPostsFxParams = {
+    offset: number;
+    userId?: number;
+};
+
+export const getPostsFx = createEffect(
+    async ({ offset, userId }: GetPostsFxParams) => {
+        const request = getPosts.getRequest();
+        const data = await request({
+            queryParams: { user: userId },
+            pathParams: String(offset * BATCH_SIZE),
+        });
+        return data;
+    }
+);
 
 export const addNewPostFx = createEffect(async (text: string) => {
     const request = postNewPost.getRequest();
@@ -54,7 +71,7 @@ export const unlikePostFx = createEffect(async (postId: number) => {
 });
 
 $posts
-    .on(getPostsFx.doneData, (_, posts) => posts)
+    .on(getPostsFx.doneData, (state, posts) => [...state, ...posts])
     .on(addNewPostFx.doneData, (state, newPost) => [...state, newPost])
     .on(deletePostFx.doneData, (state, deletedId) =>
         state.filter(({ id }) => id !== deletedId)
@@ -87,7 +104,7 @@ $posts
             return [...state.slice(0, idx), a, ...state.slice(idx + 1)];
         }
     })
-    .on(postsLoadingStarted, () => []);
+    .on(postListCleared, () => []);
 
 sample({
     clock: postDeleted,

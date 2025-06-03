@@ -20,10 +20,6 @@
     padding: 10px 15px;
 }
 
-.emotion {
-    cursor: help;
-}
-
 .user {
     display: flex;
     align-items: center;
@@ -34,6 +30,7 @@
     border-radius: 50%;
     padding: 5px;
     background-color: #aca;
+    cursor: pointer;
 }
 
 .link {
@@ -43,8 +40,12 @@
     margin-top: 5px;
 }
 
-.link:hover {
+.user:hover .link{
     color: #33b;
+}
+
+.user:hover .avatar{
+    background-color: #7a7;
 }
 
 .delete {
@@ -54,7 +55,7 @@
 .btn-group {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
     margin-top: 15px;
     padding: 0px 5px;
 }
@@ -63,6 +64,16 @@
     display: flex;
     align-items: center;
     gap: 5px;
+}
+
+.emotion {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.emotion-icon {
+    cursor: default;
 }
 
 .like-btn {

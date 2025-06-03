@@ -83,7 +83,6 @@ export const Chat = () => {
                     public_key: companion.public_key,
                     mine_public_key: user.public_key
                 }), authorId:user.id } ;
-                console.log(msg);
                 socket.emit('send-message', msg)
             }
             reset();

@@ -15,12 +15,16 @@ const ITEMS_BEFORE_LOAD = 3;
 
 export const MessageList = ({ observerRef, messages }: Props) => {
     const endRef = useRef<HTMLDivElement>(null);
+    const cachedLength = useRef<number>(0);
 
     useEffect(() => {
-        if (endRef.current) {
+        if (endRef.current && messages.length !== cachedLength.current) {
             endRef.current.scrollIntoView(false);
         }
-    }, [endRef.current, messages]);
+        if (messages.length > cachedLength.current){
+            cachedLength.current = messages.length;
+        }
+    }, [endRef.current, messages, cachedLength.current]);
 
 
     const user = useUnit($user);
