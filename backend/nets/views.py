@@ -1,7 +1,6 @@
 from core import compress
 from flask import send_file
 from nets import nets
-import os
 
 @nets.route('/json-model/<model_type>')
 @compress.compressed()

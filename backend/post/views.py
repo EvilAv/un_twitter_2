@@ -1,5 +1,7 @@
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask import jsonify, request
+from nets.utils import get_emotion
+from nets.preprocess import words_to_vector
 from core.errors import make_json_error
 from core.models import User
 from post.models import Emotion, Post
@@ -54,19 +56,24 @@ def get_posts(_offset):
 @jwt_required()
 def add_post():
     id = int(get_jwt_identity())
+
     user = db.session.execute(db.select(User).filter_by(id=id)).scalar_one_or_none()
     if not user:
         return make_json_error('user not found', 404)
+
     text = request.json.get('text', None)
     if not text or text.strip() == '':
         return make_json_error('empty text provided', 400)
 
-    emotion = random.randint(0,5)
+    # emotion = random.randint(0,5)
+    emotion = get_emotion(text)
+
     new_post = Post(text=text, author=user, emotion=Emotion(emotion).name)
     db.session.add(new_post)
     db.session.commit()
 
     print(new_post.emotion)
+    print(new_post.emotion.value)
 
     return {
         'id': new_post.id,

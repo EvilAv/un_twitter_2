@@ -26,6 +26,7 @@ export const NewPostModal = () => {
         console.log(data);
         addNewPost(data.text);
         reset();
+        closeModal();
     }, []);
 
     const isOpened = useUnit($isNewPostModalOpen);

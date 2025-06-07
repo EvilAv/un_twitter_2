@@ -56,7 +56,7 @@ app.register_blueprint(nets_blueprint)
 from chat import chat as chat_blueprint
 app.register_blueprint(chat_blueprint)
 
-from emotions import emotions as emo_blueprint
-app.register_blueprint(emo_blueprint)
+# from emotions import emotions as emo_blueprint
+# app.register_blueprint(emo_blueprint)
 
 from core import views, models
