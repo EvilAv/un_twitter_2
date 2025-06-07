@@ -13,6 +13,7 @@ import { useInView } from "react-intersection-observer";
 
 type Props = {
     userId?: number;
+    canDelete?: boolean;
 };
 
 const needRef = (idx: number, maxPosts: number) => {
@@ -22,7 +23,7 @@ const needRef = (idx: number, maxPosts: number) => {
     return idx === maxPosts - 2;
 };
 
-export const PostList = ({ userId }: Props) => {
+export const PostList = ({ userId, canDelete }: Props) => {
     const { ref, inView } = useInView();
     const [pageIdx, setPageIdx] = useState(1);
 
@@ -32,11 +33,11 @@ export const PostList = ({ userId }: Props) => {
     const posts = useUnit($posts);
 
     useEffect(() => {
+        clearPosts();
         loadPosts({ userId, offset: 0 });
 
         return () => {
             abortLoading();
-            clearPosts();
         };
     }, [userId]);
 
@@ -48,7 +49,6 @@ export const PostList = ({ userId }: Props) => {
 
         return () => {
             abortLoading();
-            clearPosts();
         };
     }, [inView, setPageIdx, userId]);
 
@@ -67,6 +67,7 @@ export const PostList = ({ userId }: Props) => {
                         likes={post.likes}
                         emotion={post.emotion}
                         ref={needRef(idx, posts.length) ? ref : undefined}
+                        canBeDeleted={canDelete}
                     />
                 ))
             ) : (

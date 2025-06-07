@@ -60,6 +60,31 @@ def prepocess(text: str):
         lemms.append('')
     return lemms
 
+# buffed version, is it?
+# def preprocess(text: str, word_cnt=WORD_CNT):
+#     if not text:
+#         return [''] * word_cnt
+
+#     # Приведение к нижнему регистру, замена типографики
+#     text = text.lower().replace('’', "'").replace('“', '"').replace('”', '"').replace('—', '-')
+
+#     # Токенизация и очистка пунктуации
+#     tokens = nltk.word_tokenize(text)
+#     tokens = [t for t in tokens if t not in string.punctuation and not t.isdigit()]
+
+#     # Стоп-слова с исключением для отрицаний
+#     stop_words = set(stopwords.words('english'))
+#     deny_words = {'no', 'not', 'nor'}
+#     filtered = [t for t in tokens if t not in stop_words or t in deny_words]
+
+#     # POS-теги и лемматизация
+#     pos_tags = nltk.pos_tag(filtered)
+#     lemmatizer = WordNetLemmatizer()
+#     lemmas = [lemmatizer.lemmatize(token, get_wordnet_pos(pos)) for token, pos in pos_tags]
+
+#     # Дополнение пустыми строками до нужного размера
+#     lemmas += [''] * (word_cnt - len(lemmas))
+#     return lemmas[:word_cnt]
 
 def get_data(path):
     df = pd.read_csv(path, sep=',', header=None, names=['Emotion', 'Text' ])

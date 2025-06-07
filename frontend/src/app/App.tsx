@@ -17,6 +17,7 @@ import { UserPage } from "../pages/user-page";
 import { NetTest } from "../pages/net-test";
 import { Chats } from "../pages/chats";
 import { Chat } from "../pages/chat";
+import { NewPostModal } from "../components/new-post-modal";
 
 export const App = () => {
     const appStart = useUnit(appStarted);
@@ -83,6 +84,7 @@ export const App = () => {
                     </div>
                 </div>
             </BrowserRouter>
+            <NewPostModal />
         </>
     );
 };

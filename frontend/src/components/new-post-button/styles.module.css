@@ -1,0 +1,29 @@
+.btn {
+    all: unset;
+    display: block;
+
+    height: 50px;
+    width: 50px;
+
+    text-align: center;
+
+    background: #585;;
+    color: #ddd;
+
+    font-weight: bold;
+    font-size: 30px;
+
+    border-radius: 50%;
+
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #474;;
+}
+
+.root {
+    position: fixed;
+    bottom: 50px;
+    right: 25%;
+}

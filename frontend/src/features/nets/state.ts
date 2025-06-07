@@ -14,9 +14,7 @@ export const getTestModelFx = createEffect(async () => {
 });
 
 export const getTestWord2vecModelFx = createEffect(async () => {
-    console.log(123)
     const model = await getModel('test-word2vec');
-    console.log(model)
     return model;
 });
 

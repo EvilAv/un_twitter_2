@@ -24,6 +24,7 @@ const EMO_ICON_SIZE = 22;
 
 type Props = TPost & {
     ref?: (node?: Element | null) => void;
+    canBeDeleted?: boolean;
 }
 
 export const PostItem = ({
@@ -35,6 +36,7 @@ export const PostItem = ({
     likes = 0,
     isLiked,
     emotion,
+    canBeDeleted,
     ref
 }: Props) => {
     const navigate = useNavigate();
@@ -78,7 +80,7 @@ export const PostItem = ({
                         </div>
                     </div>
                 </div>
-                {user?.id === authorId && (
+                {user?.id === authorId && canBeDeleted && (
                     <img
                         src={DeleteIcon}
                         width={DELETE_ICON_SIZE}
