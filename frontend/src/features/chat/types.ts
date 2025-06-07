@@ -1,3 +1,5 @@
+import { Emotion } from "../emotion/type";
+
 export type Dialog = {
     id: number,
     userId: number,
@@ -20,9 +22,12 @@ export type Message = {
     text: string;
     authorId: number;
     date: string;
+    emotion: Emotion;
 }
 
 export type RawMessage = Message & {
     nonce: string;
     mineText: string;
 }
+
+export type MessageToSend = Omit<RawMessage, 'date'>

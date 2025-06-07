@@ -37,6 +37,7 @@ export const PostItem = ({
     isLiked,
     emotion,
     canBeDeleted,
+    date,
     ref
 }: Props) => {
     const navigate = useNavigate();
@@ -92,6 +93,7 @@ export const PostItem = ({
             </div>
             <hr />
             <div className={styles.text}>{text}</div>
+            <div className={styles.date}>{date}</div>
             <div className={styles["btn-group"]}>
                 <div className={styles["like-section"]}>
                     {isLiked ? (

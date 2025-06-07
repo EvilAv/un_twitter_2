@@ -75,14 +75,7 @@ def add_post():
     print(new_post.emotion)
     print(new_post.emotion.value)
 
-    return {
-        'id': new_post.id,
-        'text': text,
-        'authorName': user.nickname,
-        'authorId': user.id,
-        'authorLogin': user.login,
-        'emotion': new_post.emotion.value
-    }
+    return serialize_post(new_post)
 
 @post.route('/delete/<post_id>', methods=['DELETE'])
 @jwt_required()

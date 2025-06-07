@@ -22,6 +22,7 @@ import { MessageList } from "../../components/message-list";
 import { getSocket } from "../../features/chat/socket";
 import { Socket } from "socket.io-client";
 import { handleError } from "./handlers";
+import { MessageToSend } from "../../features/chat/types";
 
 const ICON_SIZE = 25;
 
@@ -77,13 +78,18 @@ export const Chat = () => {
     const onSubmit: SubmitHandler<MessageFormData> = useCallback(
         (rawData) => {
             if (user && companion && socket) {
-                const msg = {...encryptMessage({
-                    text: rawData.text,
-                    private_key: user.private_key,
-                    public_key: companion.public_key,
-                    mine_public_key: user.public_key
-                }), authorId:user.id } ;
-                socket.emit('send-message', msg)
+                const msg: MessageToSend = {
+                    ...encryptMessage({
+                        text: rawData.text,
+                        private_key: user.private_key,
+                        public_key: companion.public_key,
+                        mine_public_key: user.public_key,
+                    }),
+                    authorId: user.id,
+                    emotion: 0,
+                    
+                };
+                socket.emit("send-message", msg);
             }
             reset();
         },
@@ -102,13 +108,13 @@ export const Chat = () => {
     useEffect(() => {
         if (socket) {
             socket.on("error", handleError);
-            socket.on('receive-message', addMessage)
+            socket.on("receive-message", addMessage);
         }
 
         return () => {
-            socket?.off('error', handleError)
-            socket?.off('receive-message', addMessage)
-        }
+            socket?.off("error", handleError);
+            socket?.off("receive-message", addMessage);
+        };
     }, [socket]);
 
     if (!user || !companion) {

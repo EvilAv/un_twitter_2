@@ -1,6 +1,6 @@
 from core import db
 from sqlalchemy.orm import relationship
-
+import datetime
 from enum import Enum
 
 class Emotion(Enum):
@@ -16,10 +16,9 @@ class Post(db.Model):
     text = db.Column(db.String(255), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     likes = db.Column(db.Integer, default=0)
-    # date and times are so much pain in ass in python (at least ain django)
-    # so this fields will be add later
     liked = relationship('Like', backref='liked_post', cascade='all, delete-orphan')
     emotion = db.Column(db.Enum(Emotion), nullable=False)
+    date = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
     
 
     def __repr__(self):

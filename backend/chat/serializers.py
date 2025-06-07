@@ -14,5 +14,6 @@ def serialize_message(message):
         'mineText': message.mine_text, 
         'nonce': message.nonce,
         'date': serialize_date(message.date), 
-        'authorId': message.user_id
+        'authorId': message.user_id,
+        'emotion': message.emotion.value,
     }

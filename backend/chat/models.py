@@ -2,6 +2,15 @@ from sqlalchemy.orm import relationship
 from chat.serializers import serialize_date
 from core import db
 import datetime
+from enum import Enum
+
+class Emotion(Enum):
+    SADNESS = 0
+    JOY = 1
+    LOVE = 2
+    ANGER = 3
+    FEAR = 4
+    SURPRISE = 5
 
 class Dialog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -22,6 +31,7 @@ class Message(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     dialog_id = db.Column(db.Integer, db.ForeignKey('dialog.id'), nullable=False)
     date = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    emotion = db.Column(db.Enum(Emotion), nullable=False)
 
     user = relationship('User', backref='messages', foreign_keys=[user_id])
     dialog = relationship('Dialog', backref='messages', foreign_keys=[dialog_id])

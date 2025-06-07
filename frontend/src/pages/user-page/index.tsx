@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router";
 import UserIcon from "../../icons/user.svg";
 import SubscribeIcon from "../../icons/subscribe.svg";
 import UnsubscribeIcon from "../../icons/unsubscribe.svg";
+import StartChat from "../../icons/start-chat.svg";
 
 import styles from "./styles.module.css";
 import { User } from "../../features/recomendations/types";
@@ -17,6 +18,7 @@ import {
 } from "../../features/recomendations/state";
 import { $user } from "../../features/user/state";
 import { PostList } from "../../components/post-list";
+import { dialogStarted } from "../../features/chat/state";
 
 const AVATAR_SIZE = 100;
 const ICON_SIZE = 50;
@@ -33,6 +35,7 @@ export const UserPage = () => {
     const subscriptions = useUnit($subscriptions);
     const unsubscribe = useUnit(unsubscribed);
     const subscribe = useUnit(subscribed);
+    const startDialog = useUnit(dialogStarted);
 
     const loadUser = useUnit(userLoaded);
 
@@ -42,6 +45,11 @@ export const UserPage = () => {
         unsubscribe(Number(id));
         navigate("/subscriptions");
     }, [id]);
+
+    const handleStartDialog = useCallback(() => {
+        startDialog(Number(id));
+        navigate("/chats");
+    }, [user]);
 
     const handleSubscribeClick = useCallback(() => {
         subscribe(Number(id));
@@ -71,7 +79,7 @@ export const UserPage = () => {
                     <div className={styles.link}>@{user.login}</div>
                 </div>
                 {selfUser?.id !== user.id && (
-                    <>
+                    <div className={styles['btn-group']}>
                         {isSubscribed ? (
                             <img
                                 className={styles.btn}
@@ -89,7 +97,14 @@ export const UserPage = () => {
                                 onClick={handleSubscribeClick}
                             />
                         )}
-                    </>
+                        <img
+                            className={styles.btn}
+                            src={StartChat}
+                            height={ICON_SIZE}
+                            width={ICON_SIZE}
+                            onClick={handleStartDialog}
+                        />
+                    </div>
                 )}
             </div>
             <div className={styles["post-title"]}>

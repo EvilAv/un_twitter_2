@@ -28,6 +28,8 @@ export const oneMessageLoaded = createEvent<RawMessage>();
 export const onePureMessageLoaded = createEvent<Message>();
 export const pureMessagesLoaded = createEvent<Message[]>();
 
+export const dialogStarted = createEvent<number>();
+
 const getDialogues = requestFactory<DialoguesResponse>(
     "get",
     "/chat/dialogues",
@@ -39,6 +41,17 @@ const getUser = requestFactory<UserWithKey>(
     true
 );
 const getMessages = requestFactory<RawMessage[]>("get", "/chat/messages", true);
+
+const postStartDialog = requestFactory<DialoguesResponse>(
+    "post",
+    "/chat/start-dialog",
+    true
+);
+
+export const postStartDialogFx = createEffect(async (userId: number) => {
+    const request = postStartDialog.getRequest();
+    await request({ pathParams: String(userId) });
+});
 
 export const getDialoguesFx = createEffect(async () => {
     const request = getDialogues.getRequest();
@@ -61,10 +74,7 @@ export const getMessagesFx = createEffect(
 );
 
 $messages
-    .on(pureMessagesLoaded, (state, newMessages) => [
-        ...newMessages,
-        ...state,
-    ])
+    .on(pureMessagesLoaded, (state, newMessages) => [...newMessages, ...state])
     .on(dialogClosed, () => [])
     .on(onePureMessageLoaded, (state, message) => [...state, message]);
 
@@ -75,8 +85,17 @@ sample({
     source: [$user, $companion],
     filter: ([user, user2]) => Boolean(user && user2),
     fn: ([user1, user2], messages) =>
-        messages.map(msg => decryptRawMessage(user1 as User, user2 as UserWithKey, msg)).reverse(),
-    target: pureMessagesLoaded
+        messages
+            .map((msg) =>
+                decryptRawMessage(user1 as User, user2 as UserWithKey, msg)
+            )
+            .reverse(),
+    target: pureMessagesLoaded,
+});
+
+sample({
+    clock: dialogStarted,
+    target: postStartDialogFx,
 });
 
 sample({
@@ -85,7 +104,7 @@ sample({
     filter: ([user, user2], message) => Boolean(user && user2 && message),
     fn: ([user1, user2], message) =>
         decryptRawMessage(user1 as User, user2 as UserWithKey, message),
-    target: onePureMessageLoaded
+    target: onePureMessageLoaded,
 });
 
 sample({

@@ -68,6 +68,7 @@ export const PostList = ({ userId, canDelete }: Props) => {
                         emotion={post.emotion}
                         ref={needRef(idx, posts.length) ? ref : undefined}
                         canBeDeleted={canDelete}
+                        date={post.date}
                     />
                 ))
             ) : (

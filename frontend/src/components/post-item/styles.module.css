@@ -79,3 +79,8 @@
 .like-btn {
     cursor: pointer;
 }
+
+.date {
+    font-size: 13px;
+    margin-left: 55%;
+}

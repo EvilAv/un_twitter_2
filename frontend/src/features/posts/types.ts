@@ -9,6 +9,7 @@ export type TPost = {
     likes?: number;
     isLiked: boolean;
     emotion: Emotion;
+    date: string;
 }
 
 export type AddPostBody = {

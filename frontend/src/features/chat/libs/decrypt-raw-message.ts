@@ -30,5 +30,6 @@ export const decryptRawMessage = (
         text,
         date: message.date,
         authorId: message.authorId,
+        emotion: message.emotion
     };
 };

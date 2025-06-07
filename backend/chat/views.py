@@ -3,7 +3,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from core.errors import make_json_error
 from core.models import User
 from chat import chat
-from chat.models import Dialog, Message
+from chat.models import Dialog, Emotion, Message
 from chat.serializers import serialize_date, serialize_message
 from core import db, socketio
 from flask_socketio import join_room, leave_room
@@ -55,6 +55,32 @@ def get_messages(_dialog_id, _offset):
     print(messages)
     return jsonify(list(map(serialize_message, messages)))
 
+@chat.route('/start-dialog/<_user_id>', methods=["POST"])
+@jwt_required()
+def add_dialog(_user_id):
+    id1 = int(get_jwt_identity())
+    id2 = int(_user_id)
+    user1 = db.session.execute(db.select(User).filter_by(id=id1)).scalar_one_or_none()
+    user2 = db.session.execute(db.select(User).filter_by(id=id2)).scalar_one_or_none()
+    if not user1 or not user2:
+        return make_json_error('user not found', 404)
+    
+    duplicate1 = db.session.execute(db.select(Dialog).filter_by(user1_id=id1, user2_id=id2)).scalar_one_or_none()
+    duplicate2 = db.session.execute(db.select(Dialog).filter_by(user1_id=id2, user2_id=id1)).scalar_one_or_none()
+
+    if duplicate1 or duplicate2:
+        return make_json_error('dialog already exists', 400)
+
+    new_d = Dialog(
+        user1= user1,
+        user2= user2
+    )
+
+    db.session.add(new_d)
+    db.session.commit()
+
+    return {}
+
 # @socketio.on('connect')
 # @jwt_required()
 # def handle_connect():
@@ -88,6 +114,7 @@ def handle_send_message(message):
         text=message['text'],
         mine_text=message['mineText'],
         nonce=message['nonce'],
+        emotion=Emotion(int(message['emotion'])).name,
         user_id=id,
         date=date,
         dialog_id=int(room)

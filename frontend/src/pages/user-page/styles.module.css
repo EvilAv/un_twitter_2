@@ -39,12 +39,18 @@
     border-radius: 20px;
     padding: 10px;
     background-color: #bbb;
-    margin-left: 60px;
     cursor: pointer;
 }
 
 .btn:hover {
     background-color: #aaa;
+}
+
+.btn-group {
+    margin-left: 60px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
 }
 
 .post-title {

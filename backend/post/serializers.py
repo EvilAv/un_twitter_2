@@ -1,4 +1,7 @@
-def serialize_post(raw_post, is_liked):
+def serialize_date(date):
+    return date.strftime('%d %b %Y, %H:%M')
+
+def serialize_post(raw_post, is_liked = False):
     return {
         'id': raw_post.id,
         'text': raw_post.text,
@@ -8,6 +11,7 @@ def serialize_post(raw_post, is_liked):
         'likes': raw_post.likes,
         'emotion': raw_post.emotion.value,
         'isLiked': is_liked,
+        'date': serialize_date(raw_post.date)
     }
 
 def get_post_id_from_like(like):

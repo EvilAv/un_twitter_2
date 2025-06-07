@@ -5,6 +5,7 @@ import { MessageItem } from "../message-item";
 import { useUnit } from "effector-react";
 import { $user } from "../../features/user/state";
 import { Message } from "../../features/chat/types";
+import { getEmotionIcon } from "../../features/emotion";
 
 type Props = {
     observerRef: (node?: Element | null) => void;
@@ -33,6 +34,8 @@ export const MessageList = ({ observerRef, messages }: Props) => {
         return null;
     }
 
+    console.log(messages)
+
     return (
         <div className={styles.root}>
             <div className={styles.scrollable}>
@@ -42,6 +45,7 @@ export const MessageList = ({ observerRef, messages }: Props) => {
                         text={msg.text}
                         date={msg.date}
                         key={idx}
+                        emotion={getEmotionIcon(msg.emotion)}
                         ref={
                             idx === ITEMS_BEFORE_LOAD ? observerRef : undefined
                         }

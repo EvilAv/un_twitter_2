@@ -7,9 +7,10 @@ type Props = {
     ref?: (node?: Element | null) => void;
     text: string;
     date: string;
+    emotion: string;
 };
 
-export const MessageItem = ({ isMine, ref, text, date }: Props) => {
+export const MessageItem = ({ isMine, ref, text, date, emotion }: Props) => {
     return (
         <div className={styles.root} ref={ref}>
             <div
@@ -19,6 +20,7 @@ export const MessageItem = ({ isMine, ref, text, date }: Props) => {
                         : styles["opposite-container"]
                 }
             >
+                {isMine && <div>{emotion}</div>}
                 <div
                     className={`${styles["message-container"]} ${
                         isMine ? styles.mine : styles.opposite
@@ -27,6 +29,7 @@ export const MessageItem = ({ isMine, ref, text, date }: Props) => {
                     <div className={styles.text}>{text}</div>
                     <div className={styles.date}>{date}</div>
                 </div>
+                {!isMine && <div>{emotion}</div>}
             </div>
         </div>
     );
