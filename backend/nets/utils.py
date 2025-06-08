@@ -10,5 +10,6 @@ def convert_to_input(text: str):
 
 def get_emotion(raw_text):
   t = NEURAL_NET.predict(convert_to_input(raw_text))
+  print(t)
   idx = np.argmax(t)
   return idx

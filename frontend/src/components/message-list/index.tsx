@@ -34,8 +34,6 @@ export const MessageList = ({ observerRef, messages }: Props) => {
         return null;
     }
 
-    console.log(messages)
-
     return (
         <div className={styles.root}>
             <div className={styles.scrollable}>

@@ -23,6 +23,10 @@ import { getSocket } from "../../features/chat/socket";
 import { Socket } from "socket.io-client";
 import { handleError } from "./handlers";
 import { MessageToSend } from "../../features/chat/types";
+import { wordToVector } from "../../features/emotion/lib/preproces";
+import { $finalModel, $jsonDict } from "../../features/nets/state";
+import * as tf from "@tensorflow/tfjs";
+import { getEmotionFromPredict } from "../../features/emotion";
 
 const ICON_SIZE = 25;
 
@@ -42,6 +46,8 @@ export const Chat = () => {
     const user = useUnit($user);
     const messages = useUnit($messages);
     const dialog = useUnit($selectedDialog);
+    const dict = useUnit($jsonDict);
+    const model = useUnit($finalModel);
 
     const addMessage = useUnit(oneMessageLoaded);
 
@@ -77,7 +83,13 @@ export const Chat = () => {
 
     const onSubmit: SubmitHandler<MessageFormData> = useCallback(
         (rawData) => {
-            if (user && companion && socket) {
+            if (user && companion && socket && dict && model) {
+                const tensor = wordToVector(dict, rawData.text);
+
+                const result = model.predict(tensor) as tf.Tensor2D;
+                const arr = result.arraySync() as number[][];
+                console.log(arr)
+
                 const msg: MessageToSend = {
                     ...encryptMessage({
                         text: rawData.text,
@@ -86,14 +98,13 @@ export const Chat = () => {
                         mine_public_key: user.public_key,
                     }),
                     authorId: user.id,
-                    emotion: 0,
-                    
+                    emotion: getEmotionFromPredict(arr[0]),
                 };
                 socket.emit("send-message", msg);
             }
             reset();
         },
-        [user, companion, socket]
+        [user, companion, socket, dict, model]
     );
 
     const { ref, inView } = useInView();
