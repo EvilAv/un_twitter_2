@@ -13,5 +13,7 @@ class User(db.Model):
 
     liked = relationship('Like', backref='author', cascade='all, delete-orphan')
 
+    emo_profile = db.Column(db.JSON, default=[0, 0, 0, 0, 0, 0])
+
     def __repr__(self):
         return f'User #{self.id} ({self.login}) with public key - {self.public_key}'

@@ -67,6 +67,11 @@ def add_post():
 
     # emotion = random.randint(0,5)
     emotion = get_emotion(text)
+    
+    if user.emo_profile[emotion] < 1:
+        user.emo_profile[emotion] += 0.004
+
+    # print(user.emo_profile)
 
     new_post = Post(text=text, author=user, emotion=Emotion(emotion).name)
     db.session.add(new_post)
